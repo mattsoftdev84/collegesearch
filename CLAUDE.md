@@ -19,7 +19,9 @@ Guidance for Claude Code when working in this repository.
 | Production build → `deploy/` | `npm run build`   |
 | Watch only                   | `npm run watch`   |
 
-Always run `npm run build` (minified, production React) before handing `deploy/` over or committing. Watch/preview builds are unminified with inline sourcemaps, so they must not be committed.
+Always run `npm run build` (production React) before handing `deploy/` over or committing. Watch/preview builds use development React with inline sourcemaps, so they must not be committed.
+
+`mainmenu.js` and `mainmenu.css` are deliberately **not minified**, so they stay readable in the main project. `mainmenu.css` is a straight copy of `src/app.css`, comments included. esbuild strips JS comments, so `mainmenu.js` is readable but has no comments (keeping them would need a bundler such as Rollup). Only `mainmenu-vendor.js` (React) is minified.
 
 Preview notes:
 - In Codespaces, port 8000 is auto-forwarded. The bare URL redirects to `/preview/` via the root `index.html`, which is dev-only and not deployed.
@@ -32,9 +34,10 @@ Preview notes:
 src/
   vendor.js        → deploy/mainmenu-vendor.js  React + ReactDOM, exposed as window.SapienVendor
   main.jsx         → deploy/mainmenu.js         App; imports of react/* resolve to window.SapienVendor (esbuild plugin in build.mjs)
-  app.css          → deploy/mainmenu.css        All selectors scoped under #sapien-root
+  app.css          → deploy/mainmenu.css        Copied as-is (not via esbuild). All selectors scoped under #sapien-root
   App.jsx          Hash router, theme toggle, placeholder detail pages
   SearchPage.jsx   Title, mode switch, search box, debounced search, result lists, tool cards
+  links.js         Where results link to: ViewStudent.aspx / ViewCourse.aspx (deployed) or #/ placeholders (preview)
   tools.js         Dashboards & Tools list (id, title, icon, blurb, href) + local filter
   ResultTable.jsx  Sortable results table (active rows first, max 200 rendered)
   api.js           Wrappers over window.callWebMethod plus row normalisation
@@ -57,6 +60,7 @@ Calls go through `window.callWebMethod(name, { search })` from `library/js/DataM
 | `GetCourses(string search)`  | acyear, uic, title, qualification, iscurrent, uicyear, searchstring                     | `iscurrent`    |
 | `GetClasses(string search)`  | courses fields + classcode, staffcode, staffname                                        | `iscurrent`    |
 
+- `uicyear` is misnamed. For a **course** it is `uic-acyear`, and for a **class** it is `classcode-acyear`. It's the key `ViewCourse.aspx?group=` takes for both, and the row id in the UI.
 - Active flags may arrive as `1`/`"1"`/`true`/`"True"`, and `api.js` normalises them all. Learners are deduplicated by `pcode`.
 - Search behaviour: no request until **3+ characters**, 300 ms debounce, stale responses ignored, and a 60 s in-memory cache. Course mode calls `GetCourses` and `GetClasses` in parallel.
 - Agreed server-side behaviour: filter on the server, match case-insensitively with every typed word required, cap results (TOP ~200), and return active rows first. Do **not** ship all ~6,000 learners to the browser.
@@ -66,7 +70,12 @@ Calls go through `window.callWebMethod(name, { search })` from `library/js/DataM
 Routes live in the hash so they never clash with WebForms/IIS:
 - `#/?mode=courses&q=fre&inactive=1` is the search page. Its state is kept in the URL with `replaceState`, so Back restores it.
 - `#/?mode=tools&q=dash` is the Dashboards & Tools list. The box filters it locally (no server call, no 3-char minimum), and Enter opens the top match.
-- `#/learner/<pcode>`, `#/course/<uicyear>`, `#/class/<uicyear>|<classcode>` and `#/tool/<id>` are placeholder pages. When a tool's real page exists, set its `href` in `src/tools.js` and the card links there instead. The real pages will be built later in other parts of the site.
+- Clicking a result goes to a real WebForms page (patterns in `src/links.js`, relative to `MainMenuB.aspx`):
+  - learner → `ViewStudent.aspx?student=<pcode>`
+  - course → `ViewCourse.aspx?group=<uicyear>` (uic-acyear)
+  - class → `ViewCourse.aspx?group=<uicyear>` (classcode-acyear)
+- The preview has no .aspx pages, so `preview/index.html` sets `window.SapienPreview = true`, and results open the placeholder pages `#/learner/<pcode>`, `#/course/<uicyear>` and `#/class/<uicyear>` instead.
+- `#/tool/<id>` is a placeholder page in both. When a tool's real page exists, set its `href` in `src/tools.js` and the card links there instead.
 
 ## WebForms integration (in the main project)
 
@@ -99,7 +108,7 @@ The page is `MainMenuB.aspx`. Copy the 3 files from `deploy/` into `library/js/m
 
 - `dob` in the sample CSV is `00:00.0`, which looks mangled by Excel. What is the real format? It isn't displayed yet.
 - Do learners ever come back as multiple rows (for example, one per class)? The frontend currently keeps the first row per `pcode`.
-- What are the real URLs for learner, course and class pages, and for each dashboard/tool, once they exist? They will replace the placeholders.
+- What are the real URLs for each dashboard/tool? They will replace the `#/tool/` placeholders.
 
 ## Roadmap / status
 
@@ -108,7 +117,8 @@ The page is `MainMenuB.aspx`. Copy the 3 files from `deploy/` into `library/js/m
 - [x] Placeholder detail pages
 - [x] Dashboards & Tools tab with placeholder pages
 - [ ] Backend WebMethods wired up in the main project (user)
-- [ ] Real learner, course and class pages
+- [x] Results link to ViewStudent.aspx / ViewCourse.aspx when deployed
+- [ ] Real URLs for the Dashboards & Tools pages
 
 ## Decisions log
 
@@ -118,3 +128,5 @@ The page is `MainMenuB.aspx`. Copy the 3 files from `deploy/` into `library/js/m
 - 2026-11-22: Dashboards & Tools is a third tab with a fixed list in `src/tools.js`, filtered in the browser. It needs no WebMethod.
 - 2026-11-22: Deployed as the "mainmenu" feature. The output files are `mainmenu-vendor.js`, `mainmenu.js` and `mainmenu.css`, copied to `library/js/mainmenu/` and loaded by `MainMenuB.aspx`. The UI name (SAPIEN), `#sapien-root` and `window.SapienVendor` are unchanged.
 - 2026-11-22: Logo brackets are white in dark mode and stay blue in light mode, because white would vanish on the off-white background. Letters fade in without sliding.
+- 2026-11-22: App JS and CSS are shipped unminified so they're readable in the main project. The vendor bundle stays minified.
+- 2026-11-22: Results link to the existing ViewStudent.aspx / ViewCourse.aspx pages. The `#/` detail pages are kept only for the preview, switched on by `window.SapienPreview`.

@@ -54,10 +54,13 @@ export async function searchLearners(search) {
   return out;
 }
 
+// `uicyear` is the key ViewCourse.aspx?group= expects. Despite the name it is
+// uic-acyear for a course but classcode-acyear for a class.
 export async function searchCourses(search) {
   const rows = await call('GetCourses', search);
   return rows.map((r) => ({
     id: str(r.uicyear) || `${str(r.uic)}-${str(r.acyear)}`,
+    uicyear: str(r.uicyear) || `${str(r.uic)}-${str(r.acyear)}`,
     acyear: str(r.acyear),
     uic: str(r.uic),
     title: str(r.title),
@@ -69,7 +72,8 @@ export async function searchCourses(search) {
 export async function searchClasses(search) {
   const rows = await call('GetClasses', search);
   return rows.map((r) => ({
-    id: `${str(r.uicyear) || `${str(r.uic)}-${str(r.acyear)}`}|${str(r.classcode)}`,
+    id: str(r.uicyear) || `${str(r.classcode)}-${str(r.acyear)}`,
+    uicyear: str(r.uicyear) || `${str(r.classcode)}-${str(r.acyear)}`,
     acyear: str(r.acyear),
     uic: str(r.uic),
     title: str(r.title),

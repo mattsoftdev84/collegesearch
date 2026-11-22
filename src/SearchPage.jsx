@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { searchClasses, searchCourses, searchLearners } from './api.js';
 import { detailHash, parseHash, searchHash, useDebounced } from './hooks.js';
 import ResultTable from './ResultTable.jsx';
+import { classLink, courseLink, learnerLink } from './links.js';
 import { filterTools } from './tools.js';
 import { Icon, Spinner, Switch } from './ui.jsx';
 
@@ -285,7 +286,7 @@ function LearnerResults({ learners, term, showInactive, setShowInactive }) {
       </div>
       <Toolbar summary={summary} inactiveCount={inactiveCount} showInactive={showInactive} setShowInactive={setShowInactive} />
       {rows.length ? (
-        <ResultTable caption="Learners" rows={rows} columns={LEARNER_COLS} href={(r) => detailHash('learner', r.pcode)} defaultSort={{ key: 'name', dir: 'asc' }} />
+        <ResultTable caption="Learners" rows={rows} columns={LEARNER_COLS} href={learnerLink} defaultSort={{ key: 'name', dir: 'asc' }} />
       ) : (
         <Empty what="learners" term={term} inactiveCount={inactiveCount} showInactive={showInactive} setShowInactive={setShowInactive} />
       )}
@@ -325,7 +326,7 @@ function CourseResults({ courses, classes, term, showInactive, setShowInactive }
           <span className="sp-count">{c.rows.length}</span>
         </div>
         {c.rows.length ? (
-          <ResultTable caption="Courses" rows={c.rows} columns={COURSE_COLS} href={(r) => detailHash('course', r.id)} defaultSort={{ key: 'acyear', dir: 'desc' }} />
+          <ResultTable caption="Courses" rows={c.rows} columns={COURSE_COLS} href={courseLink} defaultSort={{ key: 'acyear', dir: 'desc' }} />
         ) : (
           <Empty what="courses" term={term} inactiveCount={c.inactiveCount} showInactive={showInactive} setShowInactive={setShowInactive} />
         )}
@@ -336,7 +337,7 @@ function CourseResults({ courses, classes, term, showInactive, setShowInactive }
           <span className="sp-count">{k.rows.length}</span>
         </div>
         {k.rows.length ? (
-          <ResultTable caption="Classes" rows={k.rows} columns={CLASS_COLS} href={(r) => detailHash('class', r.id)} defaultSort={{ key: 'acyear', dir: 'desc' }} />
+          <ResultTable caption="Classes" rows={k.rows} columns={CLASS_COLS} href={classLink} defaultSort={{ key: 'acyear', dir: 'desc' }} />
         ) : (
           <Empty what="classes" term={term} inactiveCount={k.inactiveCount} showInactive={showInactive} setShowInactive={setShowInactive} />
         )}

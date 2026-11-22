@@ -1,1 +1,777 @@
-(()=>{var Le=Object.create;var te=Object.defineProperty;var Ee=Object.getOwnPropertyDescriptor;var Te=Object.getOwnPropertyNames;var Re=Object.getPrototypeOf,$e=Object.prototype.hasOwnProperty;var _=(e,a)=>()=>{try{return a||e((a={exports:{}}).exports,a),a.exports}catch(t){throw a=0,t}};var De=(e,a,t,r)=>{if(a&&typeof a=="object"||typeof a=="function")for(let n of Te(a))!$e.call(e,n)&&n!==t&&te(e,n,{get:()=>a[n],enumerable:!(r=Ee(a,n))||r.enumerable});return e};var b=(e,a,t)=>(t=e!=null?Le(Re(e)):{},De(a||!e||!e.__esModule?te(t,"default",{value:e,enumerable:!0}):t,e));var se=_((Qe,ae)=>{ae.exports=window.SapienVendor.ReactDOMClient});var T=_((Fe,re)=>{re.exports=window.SapienVendor.React});var N=_((Xe,he)=>{he.exports=window.SapienVendor.JSXRuntime});var Se=b(se());var w=b(T());var x=b(T());function ne(e,a){let[t,r]=(0,x.useState)(e);return(0,x.useEffect)(()=>{let n=setTimeout(()=>r(e),a);return()=>clearTimeout(n)},[e,a]),t}var Ie=["learners","courses","tools"];function q(e=window.location.hash){let a=e.replace(/^#\/?/,""),[t,r=""]=a.split("?"),n=t.split("/").filter(Boolean).map(decodeURIComponent),c=new URLSearchParams(r);if(n.length>=2&&["learner","course","class","tool"].includes(n[0]))return{page:n[0],id:n.slice(1).join("/")};let l=c.get("mode");return{page:"search",mode:Ie.includes(l)?l:"learners",q:c.get("q")||"",inactive:c.get("inactive")==="1"}}function oe({mode:e,q:a,inactive:t}){let r=new URLSearchParams;e&&e!=="learners"&&r.set("mode",e),a&&r.set("q",a),t&&r.set("inactive","1");let n=r.toString();return"#/"+(n?"?"+n:"")}function R(e,a){return`#/${e}/${encodeURIComponent(a)}`}function ce(){let[e,a]=(0,x.useState)(()=>q());return(0,x.useEffect)(()=>{let t=()=>a(q());return window.addEventListener("hashchange",t),()=>window.removeEventListener("hashchange",t)},[]),e}function le(e,a){try{let t=window.localStorage.getItem(e);return t??a}catch{return a}}function ie(e,a){try{window.localStorage.setItem(e,a)}catch{}}var v=b(T());function Ae(e){return e==null||e===""?[]:(typeof e=="string"&&(e=JSON.parse(e)),Array.isArray(e)?e:[])}function z(e){return e===!0||e===1||e==="1"||String(e).toLowerCase()==="true"}function i(e){return e==null?"":String(e).trim()}async function B(e,a){if(typeof window.callWebMethod!="function")throw new Error("callWebMethod is not loaded (library/js/DataMethods.js).");try{return Ae(await window.callWebMethod(e,{search:a}))}catch(t){let r=t&&typeof t.get_message=="function"?t.get_message():t&&t.message?t.message:String(t);throw new Error(r)}}async function ue(e){let a=await B("GetLearners",e),t=new Set,r=[];for(let n of a){let c=i(n.pcode);!c||t.has(c)||(t.add(c),r.push({id:c,pcode:c,active:z(n.active),firstname:i(n.firstname),lastname:i(n.lastname),dob:i(n.dob),level:i(n.level),classcode:i(n.classcode),tutorcode:i(n.tutorcode),tutorname:i(n.tutorname),endyear:i(n.endyear)}))}return r}async function de(e){return(await B("GetCourses",e)).map(t=>({id:i(t.uicyear)||`${i(t.uic)}-${i(t.acyear)}`,acyear:i(t.acyear),uic:i(t.uic),title:i(t.title),qualification:i(t.qualification),active:z(t.iscurrent)}))}async function pe(e){return(await B("GetClasses",e)).map(t=>({id:`${i(t.uicyear)||`${i(t.uic)}-${i(t.acyear)}`}|${i(t.classcode)}`,acyear:i(t.acyear),uic:i(t.uic),title:i(t.title),qualification:i(t.qualification),classcode:i(t.classcode),staffcode:i(t.staffcode),staffname:i(t.staffname),active:z(t.iscurrent)}))}var H=b(T());var o=b(N());function M({name:e,size:a=18}){let t={width:a,height:a,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2,strokeLinecap:"round",strokeLinejoin:"round","aria-hidden":!0,focusable:"false"};switch(e){case"search":return(0,o.jsxs)("svg",{...t,children:[(0,o.jsx)("circle",{cx:"11",cy:"11",r:"7"}),(0,o.jsx)("path",{d:"m20 20-3.5-3.5"})]});case"x":return(0,o.jsx)("svg",{...t,children:(0,o.jsx)("path",{d:"M18 6 6 18M6 6l12 12"})});case"sun":return(0,o.jsxs)("svg",{...t,children:[(0,o.jsx)("circle",{cx:"12",cy:"12",r:"4"}),(0,o.jsx)("path",{d:"M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"})]});case"moon":return(0,o.jsx)("svg",{...t,children:(0,o.jsx)("path",{d:"M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"})});case"back":return(0,o.jsx)("svg",{...t,children:(0,o.jsx)("path",{d:"M19 12H5M12 19l-7-7 7-7"})});case"user":return(0,o.jsxs)("svg",{...t,children:[(0,o.jsx)("circle",{cx:"12",cy:"8",r:"4"}),(0,o.jsx)("path",{d:"M4 21a8 8 0 0 1 16 0"})]});case"book":return(0,o.jsxs)("svg",{...t,children:[(0,o.jsx)("path",{d:"M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"}),(0,o.jsx)("path",{d:"M4 19.5V21h16"})]});case"grid":return(0,o.jsxs)("svg",{...t,children:[(0,o.jsx)("rect",{x:"3",y:"3",width:"7",height:"7",rx:"1.5"}),(0,o.jsx)("rect",{x:"14",y:"3",width:"7",height:"7",rx:"1.5"}),(0,o.jsx)("rect",{x:"3",y:"14",width:"7",height:"7",rx:"1.5"}),(0,o.jsx)("rect",{x:"14",y:"14",width:"7",height:"7",rx:"1.5"})]});case"gauge":return(0,o.jsxs)("svg",{...t,children:[(0,o.jsx)("path",{d:"M3.5 17a9 9 0 1 1 17 0"}),(0,o.jsx)("path",{d:"m12 13 4-5"}),(0,o.jsx)("circle",{cx:"12",cy:"13",r:"1.2"})]});case"users":return(0,o.jsxs)("svg",{...t,children:[(0,o.jsx)("circle",{cx:"9",cy:"8",r:"3.5"}),(0,o.jsx)("path",{d:"M2.5 20a6.5 6.5 0 0 1 13 0"}),(0,o.jsx)("path",{d:"M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14a6.5 6.5 0 0 1 3.5 6"})]});case"clipboard":return(0,o.jsxs)("svg",{...t,children:[(0,o.jsx)("rect",{x:"5",y:"4",width:"14",height:"17",rx:"2"}),(0,o.jsx)("path",{d:"M9 4V3h6v1M9 11h6M9 15h4"})]});case"check":return(0,o.jsxs)("svg",{...t,children:[(0,o.jsx)("rect",{x:"3",y:"3",width:"18",height:"18",rx:"3"}),(0,o.jsx)("path",{d:"m8 12 3 3 5-6"})]});case"calendar":return(0,o.jsxs)("svg",{...t,children:[(0,o.jsx)("rect",{x:"3",y:"5",width:"18",height:"16",rx:"2"}),(0,o.jsx)("path",{d:"M3 10h18M8 3v4M16 3v4"})]});case"shield":return(0,o.jsxs)("svg",{...t,children:[(0,o.jsx)("path",{d:"M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6z"}),(0,o.jsx)("path",{d:"m9 12 2 2 4-4"})]});case"home":return(0,o.jsxs)("svg",{...t,children:[(0,o.jsx)("path",{d:"M3 11 12 4l9 7"}),(0,o.jsx)("path",{d:"M5 10v10h14V10"}),(0,o.jsx)("path",{d:"M10 20v-5h4v5"})]});case"layers":return(0,o.jsxs)("svg",{...t,children:[(0,o.jsx)("path",{d:"m12 3 9 5-9 5-9-5z"}),(0,o.jsx)("path",{d:"m3 13 9 5 9-5"})]});case"arrow":return(0,o.jsx)("svg",{...t,children:(0,o.jsx)("path",{d:"M5 12h14M13 6l6 6-6 6"})});default:return null}}function P({active:e}){return(0,o.jsx)("span",{className:"sp-status "+(e?"on":"off"),children:e?"Active":"Inactive"})}function me({checked:e,onChange:a,children:t}){return(0,o.jsxs)("button",{type:"button",role:"switch","aria-checked":e,className:"sp-switch"+(e?" on":""),onClick:()=>a(!e),children:[(0,o.jsx)("span",{className:"track","aria-hidden":"true",children:(0,o.jsx)("span",{className:"thumb"})}),(0,o.jsx)("span",{children:t})]})}function V({label:e="Loading"}){return(0,o.jsx)("span",{className:"sp-spinner",role:"status","aria-label":e})}var g=b(N()),U=200;function $({caption:e,rows:a,columns:t,href:r,defaultSort:n}){let[c,l]=(0,H.useState)(n),f=(0,H.useMemo)(()=>{let u=t.find(h=>h.key===c.key);if(!u)return a;let C=c.dir==="desc"?-1:1;return[...a].sort((h,k)=>k.active-h.active||C*String(u.value(h)).localeCompare(String(u.value(k)),void 0,{numeric:!0,sensitivity:"base"}))},[a,t,c]),p=f.slice(0,U),S=u=>l(C=>C.key===u?{key:u,dir:C.dir==="asc"?"desc":"asc"}:{key:u,dir:"asc"});return(0,g.jsxs)(g.Fragment,{children:[(0,g.jsx)("div",{className:"sp-table-wrap",children:(0,g.jsxs)("table",{className:"sp-table",children:[(0,g.jsx)("caption",{className:"sp-sr",children:e}),(0,g.jsx)("thead",{children:(0,g.jsxs)("tr",{children:[(0,g.jsx)("th",{scope:"col",children:"Status"}),t.map(u=>(0,g.jsx)("th",{scope:"col","aria-sort":c.key===u.key?c.dir==="asc"?"ascending":"descending":void 0,children:(0,g.jsxs)("button",{type:"button",className:"sp-th-btn",onClick:()=>S(u.key),children:[u.label,(0,g.jsx)("span",{className:"arr","aria-hidden":"true",children:c.key===u.key?c.dir==="asc"?"\u25B2":"\u25BC":""})]})},u.key))]})}),(0,g.jsx)("tbody",{children:p.map(u=>{let C=r(u);return(0,g.jsxs)("tr",{className:u.active?"":"inactive",onClick:h=>{h.target.closest("a")||(window.location.hash=C)},children:[(0,g.jsx)("td",{children:(0,g.jsx)(P,{active:u.active})}),t.map(h=>(0,g.jsx)("td",{className:h.link?"primary":void 0,children:h.link?(0,g.jsx)("a",{href:C,children:h.render?h.render(u):h.value(u)}):h.render?h.render(u):h.value(u)},h.key))]},u.id)})})]})}),f.length>U&&(0,g.jsxs)("p",{className:"sp-table-foot",children:["Showing the first ",U," of ",f.length,". Keep typing to narrow the search."]})]})}var Y=[{id:"staff-dashboard",title:"Staff Dashboard",icon:"gauge",blurb:"Your classes, tasks and alerts at a glance",href:null},{id:"tutor-dashboard",title:"Tutor Dashboard",icon:"users",blurb:"Tutor group overview, attendance and concerns",href:null},{id:"enrolment",title:"Enrolment System",icon:"clipboard",blurb:"Applications, enrolments and transfers",href:null},{id:"attendance",title:"Attendance Tracker",icon:"check",blurb:"Registers, absences and attendance trends",href:null},{id:"staff-timetables",title:"Staff Timetables",icon:"calendar",blurb:"Look up any staff member\u2019s timetable",href:null},{id:"access-arrangements",title:"Access Arrangements Dashboard",icon:"shield",blurb:"Exam access arrangements and support needs",href:null},{id:"parent-portal",title:"Parent Portal Accounts",icon:"home",blurb:"Manage parent and carer portal access",href:null},{id:"custom-cohorts",title:"Manage Custom Cohorts",icon:"layers",blurb:"Build and maintain custom groups of learners",href:null}],fe=e=>Y.find(a=>a.id===e);function ge(e){let a=e.toLowerCase().split(/\s+/).filter(Boolean);return a.length?Y.filter(t=>{let r=(t.title+" "+t.blurb).toLowerCase();return a.every(n=>r.includes(n))}):Y}var s=b(N()),K=3,qe=300,Pe=6e4,W={learners:{label:"Search Learners",icon:"user",placeholder:"Name, learner ID or tutor group\u2026"},courses:{label:"Search Courses",icon:"book",placeholder:"Course code, title, class code or staff\u2026"},tools:{label:"Dashboards & Tools",icon:"grid",placeholder:"Filter dashboards and tools\u2026"}},ve=e=>e.href||R("tool",e.id),L=new Map;function G(e,a){let t=L.get(e);if(t&&Date.now()-t.at<Pe)return t.promise;let r=a();return L.set(e,{at:Date.now(),promise:r}),r.catch(()=>L.delete(e)),L.size>60&&L.delete(L.keys().next().value),r}function He(e,a){let t=a.toLowerCase();return e==="learners"?G("L:"+t,()=>ue(a)).then(r=>({learners:r})):Promise.all([G("C:"+t,()=>de(a)),G("K:"+t,()=>pe(a))]).then(([r,n])=>({courses:r,classes:n}))}var J=new Map;function j({route:e,hidden:a}){let[t,r]=(0,v.useState)(()=>e.page==="search"?e.mode:"learners"),[n,c]=(0,v.useState)(()=>e.page==="search"?e.q:""),[l,f]=(0,v.useState)(()=>e.page==="search"&&e.inactive),[p,S]=(0,v.useState)({status:"idle"}),[u,C]=(0,v.useState)(0),h=(0,v.useRef)(null),k=t==="tools",E=ne(n.trim(),qe),D=!k&&E.length>=K,I=(0,v.useMemo)(()=>k?ge(n):[],[k,n]);(0,v.useEffect)(()=>{if(q().page!=="search")return;let d=oe({mode:t,q:n.trim(),inactive:l});d!==window.location.hash&&window.history.replaceState(null,"",d)},[t,n,l]),(0,v.useEffect)(()=>{e.page==="search"&&(r(e.mode),c(d=>d.trim()===e.q?d:e.q),f(e.inactive))},[e]),(0,v.useEffect)(()=>{if(!D){S({status:"idle"});return}let d=!1;return S(y=>({...y,status:"loading",error:null})),He(t,E).then(y=>{if(!d){for(let xe of Object.values(y))for(let ee of xe)J.set(ee.id,ee);S({status:"done",mode:t,term:E,data:y})}},y=>{d||S({status:"error",mode:t,term:E,error:y.message||String(y)})}),()=>{d=!0}},[t,E,D,u]);let A=p.data&&p.mode===t?p.data:null,Z=p.status==="loading",ke=k||D||n.trim().length>0,Ce=d=>{d.key==="Enter"&&(d.preventDefault(),k&&n.trim()&&I.length&&(window.location.href=ve(I[0]))),d.key==="Escape"&&c("")},Me=k?n.trim()&&I.length?"Press Enter to open the first match":"\xA0":n.trim().length>0&&n.trim().length<K?`Type at least ${K} characters to search`:n?"\xA0":"Results appear as you type";return(0,s.jsxs)("div",{className:"sp-search",hidden:a,children:[(0,s.jsxs)("div",{className:"sp-hero"+(ke?" compact":""),children:[(0,s.jsxs)("h1",{className:"sp-title",children:[(0,s.jsx)("span",{className:"sp-sr",children:"SAPIEN"}),(0,s.jsx)("span",{className:"br l","aria-hidden":"true"}),(0,s.jsx)("span",{className:"word-wrap","aria-hidden":"true",children:(0,s.jsx)("span",{className:"word",children:"SAPIEN".split("").map((d,y)=>(0,s.jsx)("span",{style:{"--i":y},children:d},y))})}),(0,s.jsx)("span",{className:"br r","aria-hidden":"true"})]}),(0,s.jsxs)("div",{className:"sp-searchbox",children:[(0,s.jsx)("div",{className:"sp-seg",role:"group","aria-label":"What to search",children:Object.entries(W).map(([d,y])=>(0,s.jsxs)("button",{type:"button","aria-pressed":t===d,className:t===d?"on":"",onClick:()=>{r(d),h.current&&h.current.focus()},children:[(0,s.jsx)(M,{name:y.icon,size:16}),y.label]},d))}),(0,s.jsxs)("div",{className:"sp-input",children:[(0,s.jsx)(M,{name:"search"}),(0,s.jsx)("input",{ref:h,type:"search",autoFocus:!0,autoComplete:"off",spellCheck:"false","aria-label":W[t].label,placeholder:W[t].placeholder,value:n,onChange:d=>c(d.target.value),onKeyDown:Ce}),Z&&(0,s.jsx)(V,{label:"Searching"}),n&&(0,s.jsx)("button",{type:"button",className:"sp-clear","aria-label":"Clear search",onClick:()=>{c(""),h.current.focus()},children:(0,s.jsx)(M,{name:"x",size:16})})]}),(0,s.jsx)("p",{className:"sp-hint","aria-live":"polite",children:Me})]})]}),k&&(0,s.jsx)(Oe,{tools:I,q:n.trim(),clear:()=>{c(""),h.current.focus()}}),D&&(0,s.jsx)("div",{className:"sp-results","aria-busy":Z,children:p.status==="error"?(0,s.jsxs)("div",{className:"sp-error",role:"alert",children:[(0,s.jsxs)("span",{children:["Search failed: ",p.error]}),(0,s.jsx)("button",{type:"button",className:"sp-btn small",onClick:()=>C(d=>d+1),children:"Try again"})]}):A?t==="learners"?(0,s.jsx)(ze,{learners:A.learners,term:p.term,showInactive:l,setShowInactive:f}):(0,s.jsx)(Ue,{courses:A.courses,classes:A.classes,term:p.term,showInactive:l,setShowInactive:f}):(0,s.jsxs)("p",{className:"sp-msg",children:[(0,s.jsx)(V,{})," Searching\u2026"]})})]})}function Oe({tools:e,q:a,clear:t}){return(0,s.jsx)("section",{className:"sp-results sp-tools-wrap","aria-label":"Dashboards and tools",children:e.length?(0,s.jsx)("ul",{className:"sp-tools",children:e.map(r=>(0,s.jsx)("li",{children:(0,s.jsxs)("a",{className:"sp-tool",href:ve(r),children:[(0,s.jsx)("span",{className:"sp-tool-icon",children:(0,s.jsx)(M,{name:r.icon,size:20})}),(0,s.jsxs)("span",{className:"sp-tool-text",children:[(0,s.jsx)("b",{children:r.title}),(0,s.jsx)("span",{children:r.blurb})]}),(0,s.jsx)("span",{className:"sp-tool-go",children:(0,s.jsx)(M,{name:"arrow",size:16})})]})},r.id))}):(0,s.jsxs)("div",{className:"sp-empty",children:["No dashboards or tools match \u201C",a,"\u201D."," ",(0,s.jsx)("button",{type:"button",className:"sp-link",onClick:t,children:"Clear filter"})]})})}function Q(e,a){let t=e.filter(r=>r.active);return{rows:a?e:t,inactiveCount:e.length-t.length}}function be({summary:e,inactiveCount:a,showInactive:t,setShowInactive:r}){return(0,s.jsxs)("div",{className:"sp-toolbar",children:[(0,s.jsx)("p",{"aria-live":"polite",children:e}),(0,s.jsxs)(me,{checked:t,onChange:r,children:["Show inactive",a?` (${a})`:""]})]})}function F({what:e,term:a,inactiveCount:t,showInactive:r,setShowInactive:n}){return(0,s.jsx)("div",{className:"sp-empty",children:t>0&&!r?(0,s.jsxs)(s.Fragment,{children:["No active ",e," match \u201C",a,"\u201D."," ",(0,s.jsxs)("button",{type:"button",className:"sp-link",onClick:()=>n(!0),children:["Show ",t," inactive"]})]}):(0,s.jsxs)(s.Fragment,{children:["No ",e," match \u201C",a,"\u201D."]})})}var O=(e,a,t)=>`${e} ${e===1?a:t}`,_e=[{key:"name",label:"Name",link:!0,value:e=>`${e.lastname}, ${e.firstname}`,render:e=>(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)("b",{children:e.lastname}),", ",e.firstname]})},{key:"pcode",label:"Learner ID",value:e=>e.pcode},{key:"level",label:"Level",value:e=>e.level},{key:"classcode",label:"Tutor group",value:e=>e.classcode},{key:"tutorname",label:"Tutor",value:e=>e.tutorname},{key:"endyear",label:"End year",value:e=>e.endyear}];function ze({learners:e,term:a,showInactive:t,setShowInactive:r}){let{rows:n,inactiveCount:c}=(0,v.useMemo)(()=>Q(e,t),[e,t]),l=e.length-c,f=t?`${O(e.length,"learner","learners")} (${l} active)`:`${O(l,"active learner","active learners")}${c?` \xB7 ${c} inactive hidden`:""}`;return(0,s.jsxs)("section",{className:"sp-section","aria-labelledby":"sp-h-learners",children:[(0,s.jsx)("div",{className:"sp-section-head",children:(0,s.jsx)("h2",{id:"sp-h-learners",children:"Learners"})}),(0,s.jsx)(be,{summary:f,inactiveCount:c,showInactive:t,setShowInactive:r}),n.length?(0,s.jsx)($,{caption:"Learners",rows:n,columns:_e,href:p=>R("learner",p.pcode),defaultSort:{key:"name",dir:"asc"}}):(0,s.jsx)(F,{what:"learners",term:a,inactiveCount:c,showInactive:t,setShowInactive:r})]})}var Be=[{key:"title",label:"Course",link:!0,value:e=>e.title,render:e=>(0,s.jsx)("b",{children:e.title})},{key:"uic",label:"Code",value:e=>e.uic},{key:"qualification",label:"Qualification",value:e=>e.qualification},{key:"acyear",label:"Year",value:e=>e.acyear}],Ve=[{key:"classcode",label:"Class",link:!0,value:e=>e.classcode,render:e=>(0,s.jsx)("b",{children:e.classcode})},{key:"title",label:"Course",value:e=>e.title},{key:"uic",label:"Code",value:e=>e.uic},{key:"staffname",label:"Staff",value:e=>e.staffname},{key:"acyear",label:"Year",value:e=>e.acyear}];function Ue({courses:e,classes:a,term:t,showInactive:r,setShowInactive:n}){let c=(0,v.useMemo)(()=>Q(e,r),[e,r]),l=(0,v.useMemo)(()=>Q(a,r),[a,r]),f=c.inactiveCount+l.inactiveCount,p=`${O(c.rows.length,"course","courses")} \xB7 ${O(l.rows.length,"class","classes")}${!r&&f?` \xB7 ${f} inactive hidden`:""}`;return(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(be,{summary:p,inactiveCount:f,showInactive:r,setShowInactive:n}),(0,s.jsxs)("section",{className:"sp-section","aria-labelledby":"sp-h-courses",children:[(0,s.jsxs)("div",{className:"sp-section-head",children:[(0,s.jsx)("h2",{id:"sp-h-courses",children:"Courses"}),(0,s.jsx)("span",{className:"sp-count",children:c.rows.length})]}),c.rows.length?(0,s.jsx)($,{caption:"Courses",rows:c.rows,columns:Be,href:S=>R("course",S.id),defaultSort:{key:"acyear",dir:"desc"}}):(0,s.jsx)(F,{what:"courses",term:t,inactiveCount:c.inactiveCount,showInactive:r,setShowInactive:n})]}),(0,s.jsxs)("section",{className:"sp-section","aria-labelledby":"sp-h-classes",children:[(0,s.jsxs)("div",{className:"sp-section-head",children:[(0,s.jsx)("h2",{id:"sp-h-classes",children:"Classes"}),(0,s.jsx)("span",{className:"sp-count",children:l.rows.length})]}),l.rows.length?(0,s.jsx)($,{caption:"Classes",rows:l.rows,columns:Ve,href:S=>R("class",S.id),defaultSort:{key:"acyear",dir:"desc"}}):(0,s.jsx)(F,{what:"classes",term:t,inactiveCount:l.inactiveCount,showInactive:r,setShowInactive:n})]})]})}var m=b(N()),ye="sapien-theme";function Ye(){let e=le(ye,null);return e==="dark"||e==="light"?e:window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}function X({rootEl:e}){let a=ce(),[t,r]=(0,w.useState)(Ye),n=(0,w.useRef)("#/"),c=(0,w.useRef)(0),l=(0,w.useRef)(a.page);(0,w.useLayoutEffect)(()=>{e.setAttribute("data-theme",t)},[t,e]),a.page==="search"&&(n.current=window.location.hash||"#/"),(0,w.useLayoutEffect)(()=>{l.current==="search"&&a.page!=="search"?window.scrollTo(0,0):l.current!=="search"&&a.page==="search"&&window.scrollTo(0,c.current),l.current=a.page},[a.page]),(0,w.useEffect)(()=>{if(a.page!=="search")return;let p=()=>c.current=window.scrollY;return window.addEventListener("scroll",p,{passive:!0}),()=>window.removeEventListener("scroll",p)},[a.page]);let f=()=>{let p=t==="dark"?"light":"dark";r(p),ie(ye,p)};return(0,m.jsxs)("div",{className:"sp-app",children:[(0,m.jsxs)("div",{className:"sp-top",children:[a.page!=="search"&&(0,m.jsxs)("a",{className:"sp-btn ghost",href:n.current,children:[(0,m.jsx)(M,{name:"back",size:16})," Back to search"]}),(0,m.jsx)("button",{type:"button",className:"sp-icon-btn",onClick:f,"aria-label":t==="dark"?"Switch to light mode":"Switch to dark mode",title:t==="dark"?"Light mode":"Dark mode",children:(0,m.jsx)(M,{name:t==="dark"?"sun":"moon"})})]}),(0,m.jsx)(j,{route:a,hidden:a.page!=="search"}),a.page!=="search"&&(0,m.jsx)(We,{kind:a.page,id:a.id})]})}var Ke={learner:{title:"Learner record",area:"learner area"},course:{title:"Course",area:"course area"},class:{title:"Class",area:"class area"},tool:{title:"Dashboards & Tools",area:"tool"}};function We({kind:e,id:a}){let t=e==="tool"?null:J.get(a),r=e==="tool"?fe(a):null,n=Ke[e],c=(0,w.useRef)(null);(0,w.useEffect)(()=>{c.current&&c.current.focus()},[e,a]);let l=a,f=[];return e==="tool"?l=r?r.title:"Unknown tool":t&&e==="learner"?(l=`${t.firstname} ${t.lastname}`,f.push(["Learner ID",t.pcode],["Level",t.level],["Tutor group",t.classcode],["Tutor",t.tutorname])):t&&e==="course"?(l=t.title,f.push(["Code",t.uic],["Year",t.acyear],["Qualification",t.qualification])):t&&e==="class"&&(l=`${t.classcode}: ${t.title}`,f.push(["Course",t.uic],["Year",t.acyear],["Staff",t.staffname])),(0,m.jsxs)("div",{className:"sp-page",children:[(0,m.jsx)("p",{className:"sp-eyebrow",children:n.title}),(0,m.jsxs)("h1",{className:"sp-page-title",tabIndex:-1,ref:c,children:[l," ",t&&(0,m.jsx)(P,{active:t.active})]}),f.length>0&&(0,m.jsx)("dl",{className:"sp-facts",children:f.map(([p,S])=>(0,m.jsxs)("div",{children:[(0,m.jsx)("dt",{children:p}),(0,m.jsx)("dd",{children:S||"\u2014"})]},p))}),(0,m.jsxs)("div",{className:"sp-section sp-placeholder",children:[(0,m.jsx)("h2",{children:"Coming soon"}),e==="tool"?(0,m.jsx)("p",{children:r?`${r.blurb}. This page hasn't been built yet.`:`There is no tool called \u201C${a}\u201D.`}):(0,m.jsxs)("p",{children:["This page belongs to the ",n.area,", which hasn't been upgraded yet."]})]})]})}var Ne=b(N());function we(){let e=document.getElementById("sapien-root");if(!e){console.error('SAPIEN: no <div id="sapien-root"> on the page.');return}(0,Se.createRoot)(e).render((0,Ne.jsx)(X,{rootEl:e}))}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",we):we();})();
+(() => {
+  var __create = Object.create;
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getProtoOf = Object.getPrototypeOf;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __commonJS = (cb, mod) => function __require() {
+    try {
+      return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+    } catch (e) {
+      throw mod = 0, e;
+    }
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+    // If the importer is in node compatibility mode or this is not an ESM
+    // file that has been converted to a CommonJS file using a Babel-
+    // compatible transform (i.e. "__esModule" has not been set), then set
+    // "default" to the CommonJS "module.exports" for node compatibility.
+    isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+    mod
+  ));
+
+  // vendor-global:react-dom/client
+  var require_client = __commonJS({
+    "vendor-global:react-dom/client"(exports, module) {
+      module.exports = window.SapienVendor.ReactDOMClient;
+    }
+  });
+
+  // vendor-global:react
+  var require_react = __commonJS({
+    "vendor-global:react"(exports, module) {
+      module.exports = window.SapienVendor.React;
+    }
+  });
+
+  // vendor-global:react/jsx-runtime
+  var require_jsx_runtime = __commonJS({
+    "vendor-global:react/jsx-runtime"(exports, module) {
+      module.exports = window.SapienVendor.JSXRuntime;
+    }
+  });
+
+  // src/main.jsx
+  var import_client = __toESM(require_client());
+
+  // src/App.jsx
+  var import_react4 = __toESM(require_react());
+
+  // src/hooks.js
+  var import_react = __toESM(require_react());
+  function useDebounced(value, ms) {
+    const [v, setV] = (0, import_react.useState)(value);
+    (0, import_react.useEffect)(() => {
+      const t = setTimeout(() => setV(value), ms);
+      return () => clearTimeout(t);
+    }, [value, ms]);
+    return v;
+  }
+  var MODES = ["learners", "courses", "tools"];
+  function parseHash(hash = window.location.hash) {
+    const raw = hash.replace(/^#\/?/, "");
+    const [path, qs = ""] = raw.split("?");
+    const parts = path.split("/").filter(Boolean).map(decodeURIComponent);
+    const params = new URLSearchParams(qs);
+    if (parts.length >= 2 && ["learner", "course", "class", "tool"].includes(parts[0])) {
+      return { page: parts[0], id: parts.slice(1).join("/") };
+    }
+    const mode = params.get("mode");
+    return {
+      page: "search",
+      mode: MODES.includes(mode) ? mode : "learners",
+      q: params.get("q") || "",
+      inactive: params.get("inactive") === "1"
+    };
+  }
+  function searchHash({ mode, q, inactive }) {
+    const p = new URLSearchParams();
+    if (mode && mode !== "learners") p.set("mode", mode);
+    if (q) p.set("q", q);
+    if (inactive) p.set("inactive", "1");
+    const s = p.toString();
+    return "#/" + (s ? "?" + s : "");
+  }
+  function detailHash(page, id) {
+    return `#/${page}/${encodeURIComponent(id)}`;
+  }
+  function useHashRoute() {
+    const [route, setRoute] = (0, import_react.useState)(() => parseHash());
+    (0, import_react.useEffect)(() => {
+      const on = () => setRoute(parseHash());
+      window.addEventListener("hashchange", on);
+      return () => window.removeEventListener("hashchange", on);
+    }, []);
+    return route;
+  }
+  function load(key, fallback) {
+    try {
+      const v = window.localStorage.getItem(key);
+      return v == null ? fallback : v;
+    } catch {
+      return fallback;
+    }
+  }
+  function save(key, value) {
+    try {
+      window.localStorage.setItem(key, value);
+    } catch {
+    }
+  }
+
+  // src/SearchPage.jsx
+  var import_react3 = __toESM(require_react());
+
+  // src/api.js
+  function asRows(data) {
+    if (data == null || data === "") return [];
+    if (typeof data === "string") data = JSON.parse(data);
+    return Array.isArray(data) ? data : [];
+  }
+  function isTrue(v) {
+    return v === true || v === 1 || v === "1" || String(v).toLowerCase() === "true";
+  }
+  function str(v) {
+    return v == null ? "" : String(v).trim();
+  }
+  async function call(method, search) {
+    if (typeof window.callWebMethod !== "function") {
+      throw new Error("callWebMethod is not loaded (library/js/DataMethods.js).");
+    }
+    try {
+      return asRows(await window.callWebMethod(method, { search }));
+    } catch (err) {
+      const msg = err && typeof err.get_message === "function" ? err.get_message() : err && err.message ? err.message : String(err);
+      throw new Error(msg);
+    }
+  }
+  async function searchLearners(search) {
+    const rows = await call("GetLearners", search);
+    const seen = /* @__PURE__ */ new Set();
+    const out = [];
+    for (const r of rows) {
+      const pcode = str(r.pcode);
+      if (!pcode || seen.has(pcode)) continue;
+      seen.add(pcode);
+      out.push({
+        id: pcode,
+        pcode,
+        active: isTrue(r.active),
+        firstname: str(r.firstname),
+        lastname: str(r.lastname),
+        dob: str(r.dob),
+        level: str(r.level),
+        classcode: str(r.classcode),
+        tutorcode: str(r.tutorcode),
+        tutorname: str(r.tutorname),
+        endyear: str(r.endyear)
+      });
+    }
+    return out;
+  }
+  async function searchCourses(search) {
+    const rows = await call("GetCourses", search);
+    return rows.map((r) => ({
+      id: str(r.uicyear) || `${str(r.uic)}-${str(r.acyear)}`,
+      uicyear: str(r.uicyear) || `${str(r.uic)}-${str(r.acyear)}`,
+      acyear: str(r.acyear),
+      uic: str(r.uic),
+      title: str(r.title),
+      qualification: str(r.qualification),
+      active: isTrue(r.iscurrent)
+    }));
+  }
+  async function searchClasses(search) {
+    const rows = await call("GetClasses", search);
+    return rows.map((r) => ({
+      id: str(r.uicyear) || `${str(r.classcode)}-${str(r.acyear)}`,
+      uicyear: str(r.uicyear) || `${str(r.classcode)}-${str(r.acyear)}`,
+      acyear: str(r.acyear),
+      uic: str(r.uic),
+      title: str(r.title),
+      qualification: str(r.qualification),
+      classcode: str(r.classcode),
+      staffcode: str(r.staffcode),
+      staffname: str(r.staffname),
+      active: isTrue(r.iscurrent)
+    }));
+  }
+
+  // src/ResultTable.jsx
+  var import_react2 = __toESM(require_react());
+
+  // src/ui.jsx
+  var import_jsx_runtime = __toESM(require_jsx_runtime());
+  function Icon({ name, size = 18 }) {
+    const p = { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true, focusable: "false" };
+    switch (name) {
+      case "search":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "11", cy: "11", r: "7" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m20 20-3.5-3.5" })
+        ] });
+      case "x":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", { ...p, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M18 6 6 18M6 6l12 12" }) });
+      case "sun":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "12", cy: "12", r: "4" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" })
+        ] });
+      case "moon":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", { ...p, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" }) });
+      case "back":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", { ...p, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M19 12H5M12 19l-7-7 7-7" }) });
+      case "user":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "12", cy: "8", r: "4" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M4 21a8 8 0 0 1 16 0" })
+        ] });
+      case "book":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M4 19.5V21h16" })
+        ] });
+      case "grid":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "3", y: "3", width: "7", height: "7", rx: "1.5" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "14", y: "3", width: "7", height: "7", rx: "1.5" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "3", y: "14", width: "7", height: "7", rx: "1.5" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "14", y: "14", width: "7", height: "7", rx: "1.5" })
+        ] });
+      case "gauge":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M3.5 17a9 9 0 1 1 17 0" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m12 13 4-5" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "12", cy: "13", r: "1.2" })
+        ] });
+      case "users":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "9", cy: "8", r: "3.5" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M2.5 20a6.5 6.5 0 0 1 13 0" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14a6.5 6.5 0 0 1 3.5 6" })
+        ] });
+      case "clipboard":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "5", y: "4", width: "14", height: "17", rx: "2" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M9 4V3h6v1M9 11h6M9 15h4" })
+        ] });
+      case "check":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "3", y: "3", width: "18", height: "18", rx: "3" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m8 12 3 3 5-6" })
+        ] });
+      case "calendar":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "3", y: "5", width: "18", height: "16", rx: "2" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M3 10h18M8 3v4M16 3v4" })
+        ] });
+      case "shield":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6z" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m9 12 2 2 4-4" })
+        ] });
+      case "home":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M3 11 12 4l9 7" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M5 10v10h14V10" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M10 20v-5h4v5" })
+        ] });
+      case "layers":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m12 3 9 5-9 5-9-5z" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m3 13 9 5 9-5" })
+        ] });
+      case "arrow":
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", { ...p, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M5 12h14M13 6l6 6-6 6" }) });
+      default:
+        return null;
+    }
+  }
+  function StatusPill({ active }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sp-status " + (active ? "on" : "off"), children: active ? "Active" : "Inactive" });
+  }
+  function Switch({ checked, onChange, children }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { type: "button", role: "switch", "aria-checked": checked, className: "sp-switch" + (checked ? " on" : ""), onClick: () => onChange(!checked), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "track", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "thumb" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children })
+    ] });
+  }
+  function Spinner({ label = "Loading" }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sp-spinner", role: "status", "aria-label": label });
+  }
+
+  // src/ResultTable.jsx
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  var ROW_LIMIT = 200;
+  function ResultTable({ caption, rows, columns, href, defaultSort }) {
+    const [sort, setSort] = (0, import_react2.useState)(defaultSort);
+    const sorted = (0, import_react2.useMemo)(() => {
+      const col = columns.find((c) => c.key === sort.key);
+      if (!col) return rows;
+      const dir = sort.dir === "desc" ? -1 : 1;
+      return [...rows].sort((a, b) => b.active - a.active || dir * String(col.value(a)).localeCompare(String(col.value(b)), void 0, { numeric: true, sensitivity: "base" }));
+    }, [rows, columns, sort]);
+    const shown = sorted.slice(0, ROW_LIMIT);
+    const toggleSort = (key) => setSort((s) => s.key === key ? { key, dir: s.dir === "asc" ? "desc" : "asc" } : { key, dir: "asc" });
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_jsx_runtime2.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "sp-table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("table", { className: "sp-table", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("caption", { className: "sp-sr", children: caption }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { scope: "col", children: "Status" }),
+          columns.map((c) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { scope: "col", "aria-sort": sort.key === c.key ? sort.dir === "asc" ? "ascending" : "descending" : void 0, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("button", { type: "button", className: "sp-th-btn", onClick: () => toggleSort(c.key), children: [
+            c.label,
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "arr", "aria-hidden": "true", children: sort.key === c.key ? sort.dir === "asc" ? "\u25B2" : "\u25BC" : "" })
+          ] }) }, c.key))
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("tbody", { children: shown.map((r) => {
+          const to = href(r);
+          return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+            "tr",
+            {
+              className: r.active ? "" : "inactive",
+              onClick: (e) => {
+                if (e.target.closest("a")) return;
+                window.location.href = to;
+              },
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(StatusPill, { active: r.active }) }),
+                columns.map((c) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { className: c.link ? "primary" : void 0, children: c.link ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("a", { href: to, children: c.render ? c.render(r) : c.value(r) }) : c.render ? c.render(r) : c.value(r) }, c.key))
+              ]
+            },
+            r.id
+          );
+        }) })
+      ] }) }),
+      sorted.length > ROW_LIMIT && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { className: "sp-table-foot", children: [
+        "Showing the first ",
+        ROW_LIMIT,
+        " of ",
+        sorted.length,
+        ". Keep typing to narrow the search."
+      ] })
+    ] });
+  }
+
+  // src/links.js
+  var PAGES = {
+    learner: "ViewStudent.aspx?student={0}",
+    // {0} = pcode
+    course: "ViewCourse.aspx?group={0}",
+    //     {0} = uicyear (uic-acyear)
+    class: "ViewCourse.aspx?group={0}"
+    //      {0} = uicyear (classcode-acyear)
+  };
+  var isPreview = () => window.SapienPreview === true;
+  function link(kind, value) {
+    if (isPreview()) return detailHash(kind, value);
+    return PAGES[kind].replace("{0}", encodeURIComponent(value));
+  }
+  var learnerLink = (r) => link("learner", r.pcode);
+  var courseLink = (r) => link("course", r.uicyear);
+  var classLink = (r) => link("class", r.uicyear);
+
+  // src/tools.js
+  var TOOLS = [
+    { id: "staff-dashboard", title: "Staff Dashboard", icon: "gauge", blurb: "Your classes, tasks and alerts at a glance", href: null },
+    { id: "tutor-dashboard", title: "Tutor Dashboard", icon: "users", blurb: "Tutor group overview, attendance and concerns", href: null },
+    { id: "enrolment", title: "Enrolment System", icon: "clipboard", blurb: "Applications, enrolments and transfers", href: null },
+    { id: "attendance", title: "Attendance Tracker", icon: "check", blurb: "Registers, absences and attendance trends", href: null },
+    { id: "staff-timetables", title: "Staff Timetables", icon: "calendar", blurb: "Look up any staff member\u2019s timetable", href: null },
+    { id: "access-arrangements", title: "Access Arrangements Dashboard", icon: "shield", blurb: "Exam access arrangements and support needs", href: null },
+    { id: "parent-portal", title: "Parent Portal Accounts", icon: "home", blurb: "Manage parent and carer portal access", href: null },
+    { id: "custom-cohorts", title: "Manage Custom Cohorts", icon: "layers", blurb: "Build and maintain custom groups of learners", href: null }
+  ];
+  var toolById = (id) => TOOLS.find((t) => t.id === id);
+  function filterTools(q) {
+    const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+    if (!words.length) return TOOLS;
+    return TOOLS.filter((t) => {
+      const hay = (t.title + " " + t.blurb).toLowerCase();
+      return words.every((w) => hay.includes(w));
+    });
+  }
+
+  // src/SearchPage.jsx
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+  var MIN_CHARS = 3;
+  var DEBOUNCE_MS = 300;
+  var CACHE_MS = 6e4;
+  var MODES2 = {
+    learners: { label: "Search Learners", icon: "user", placeholder: "Name, learner ID or tutor group\u2026" },
+    courses: { label: "Search Courses", icon: "book", placeholder: "Course code, title, class code or staff\u2026" },
+    tools: { label: "Dashboards & Tools", icon: "grid", placeholder: "Filter dashboards and tools\u2026" }
+  };
+  var toolHref = (t) => t.href || detailHash("tool", t.id);
+  var cache = /* @__PURE__ */ new Map();
+  function cached(key, fn) {
+    const hit = cache.get(key);
+    if (hit && Date.now() - hit.at < CACHE_MS) return hit.promise;
+    const promise = fn();
+    cache.set(key, { at: Date.now(), promise });
+    promise.catch(() => cache.delete(key));
+    if (cache.size > 60) cache.delete(cache.keys().next().value);
+    return promise;
+  }
+  function runSearch(mode, term) {
+    const key = term.toLowerCase();
+    if (mode === "learners") {
+      return cached("L:" + key, () => searchLearners(term)).then((learners) => ({ learners }));
+    }
+    return Promise.all([cached("C:" + key, () => searchCourses(term)), cached("K:" + key, () => searchClasses(term))]).then(
+      ([courses, classes]) => ({ courses, classes })
+    );
+  }
+  var known = /* @__PURE__ */ new Map();
+  function SearchPage({ route, hidden }) {
+    const [mode, setMode] = (0, import_react3.useState)(() => route.page === "search" ? route.mode : "learners");
+    const [q, setQ] = (0, import_react3.useState)(() => route.page === "search" ? route.q : "");
+    const [showInactive, setShowInactive] = (0, import_react3.useState)(() => route.page === "search" && route.inactive);
+    const [state, setState] = (0, import_react3.useState)({ status: "idle" });
+    const [retry, setRetry] = (0, import_react3.useState)(0);
+    const inputRef = (0, import_react3.useRef)(null);
+    const isTools = mode === "tools";
+    const term = useDebounced(q.trim(), DEBOUNCE_MS);
+    const ready = !isTools && term.length >= MIN_CHARS;
+    const tools = (0, import_react3.useMemo)(() => isTools ? filterTools(q) : [], [isTools, q]);
+    (0, import_react3.useEffect)(() => {
+      if (parseHash().page !== "search") return;
+      const h = searchHash({ mode, q: q.trim(), inactive: showInactive });
+      if (h !== window.location.hash) window.history.replaceState(null, "", h);
+    }, [mode, q, showInactive]);
+    (0, import_react3.useEffect)(() => {
+      if (route.page !== "search") return;
+      setMode(route.mode);
+      setQ((cur) => cur.trim() === route.q ? cur : route.q);
+      setShowInactive(route.inactive);
+    }, [route]);
+    (0, import_react3.useEffect)(() => {
+      if (!ready) {
+        setState({ status: "idle" });
+        return;
+      }
+      let stale = false;
+      setState((s) => ({ ...s, status: "loading", error: null }));
+      runSearch(mode, term).then(
+        (data2) => {
+          if (stale) return;
+          for (const list of Object.values(data2)) for (const item of list) known.set(item.id, item);
+          setState({ status: "done", mode, term, data: data2 });
+        },
+        (err) => {
+          if (!stale) setState({ status: "error", mode, term, error: err.message || String(err) });
+        }
+      );
+      return () => {
+        stale = true;
+      };
+    }, [mode, term, ready, retry]);
+    const data = state.data && state.mode === mode ? state.data : null;
+    const loading = state.status === "loading";
+    const hasResults = isTools || ready || q.trim().length > 0;
+    const onKeyDown = (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (isTools && q.trim() && tools.length) window.location.href = toolHref(tools[0]);
+      }
+      if (e.key === "Escape") setQ("");
+    };
+    const hint = isTools ? q.trim() && tools.length ? "Press Enter to open the first match" : "\xA0" : q.trim().length > 0 && q.trim().length < MIN_CHARS ? `Type at least ${MIN_CHARS} characters to search` : !q ? "Results appear as you type" : "\xA0";
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-search", hidden, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-hero" + (hasResults ? " compact" : ""), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("h1", { className: "sp-title", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sp-sr", children: "SAPIEN" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "br l", "aria-hidden": "true" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "word-wrap", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "word", children: "SAPIEN".split("").map((ch, i) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { style: { "--i": i }, children: ch }, i)) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "br r", "aria-hidden": "true" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-searchbox", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "sp-seg", role: "group", "aria-label": "What to search", children: Object.entries(MODES2).map(([key, m]) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+            "button",
+            {
+              type: "button",
+              "aria-pressed": mode === key,
+              className: mode === key ? "on" : "",
+              onClick: () => {
+                setMode(key);
+                inputRef.current && inputRef.current.focus();
+              },
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Icon, { name: m.icon, size: 16 }),
+                m.label
+              ]
+            },
+            key
+          )) }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-input", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Icon, { name: "search" }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+              "input",
+              {
+                ref: inputRef,
+                type: "search",
+                autoFocus: true,
+                autoComplete: "off",
+                spellCheck: "false",
+                "aria-label": MODES2[mode].label,
+                placeholder: MODES2[mode].placeholder,
+                value: q,
+                onChange: (e) => setQ(e.target.value),
+                onKeyDown
+              }
+            ),
+            loading && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Spinner, { label: "Searching" }),
+            q && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { type: "button", className: "sp-clear", "aria-label": "Clear search", onClick: () => {
+              setQ("");
+              inputRef.current.focus();
+            }, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Icon, { name: "x", size: 16 }) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "sp-hint", "aria-live": "polite", children: hint })
+        ] })
+      ] }),
+      isTools && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(ToolList, { tools, q: q.trim(), clear: () => {
+        setQ("");
+        inputRef.current.focus();
+      } }),
+      ready && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "sp-results", "aria-busy": loading, children: state.status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-error", role: "alert", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { children: [
+          "Search failed: ",
+          state.error
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { type: "button", className: "sp-btn small", onClick: () => setRetry((n) => n + 1), children: "Try again" })
+      ] }) : !data ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("p", { className: "sp-msg", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Spinner, {}),
+        " Searching\u2026"
+      ] }) : mode === "learners" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(LearnerResults, { learners: data.learners, term: state.term, showInactive, setShowInactive }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(CourseResults, { courses: data.courses, classes: data.classes, term: state.term, showInactive, setShowInactive }) })
+    ] });
+  }
+  function ToolList({ tools, q, clear }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("section", { className: "sp-results sp-tools-wrap", "aria-label": "Dashboards and tools", children: tools.length ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("ul", { className: "sp-tools", children: tools.map((t) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("a", { className: "sp-tool", href: toolHref(t), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sp-tool-icon", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Icon, { name: t.icon, size: 20 }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { className: "sp-tool-text", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("b", { children: t.title }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: t.blurb })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sp-tool-go", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Icon, { name: "arrow", size: 16 }) })
+    ] }) }, t.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-empty", children: [
+      "No dashboards or tools match \u201C",
+      q,
+      "\u201D.",
+      " ",
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { type: "button", className: "sp-link", onClick: clear, children: "Clear filter" })
+    ] }) });
+  }
+  function split(rows, showInactive) {
+    const active = rows.filter((r) => r.active);
+    return { rows: showInactive ? rows : active, inactiveCount: rows.length - active.length };
+  }
+  function Toolbar({ summary, inactiveCount, showInactive, setShowInactive }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-toolbar", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { "aria-live": "polite", children: summary }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(Switch, { checked: showInactive, onChange: setShowInactive, children: [
+        "Show inactive",
+        inactiveCount ? ` (${inactiveCount})` : ""
+      ] })
+    ] });
+  }
+  function Empty({ what, term, inactiveCount, showInactive, setShowInactive }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "sp-empty", children: inactiveCount > 0 && !showInactive ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
+      "No active ",
+      what,
+      " match \u201C",
+      term,
+      "\u201D.",
+      " ",
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("button", { type: "button", className: "sp-link", onClick: () => setShowInactive(true), children: [
+        "Show ",
+        inactiveCount,
+        " inactive"
+      ] })
+    ] }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
+      "No ",
+      what,
+      " match \u201C",
+      term,
+      "\u201D."
+    ] }) });
+  }
+  var plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  var LEARNER_COLS = [
+    { key: "name", label: "Name", link: true, value: (r) => `${r.lastname}, ${r.firstname}`, render: (r) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("b", { children: r.lastname }),
+      ", ",
+      r.firstname
+    ] }) },
+    { key: "pcode", label: "Learner ID", value: (r) => r.pcode },
+    { key: "level", label: "Level", value: (r) => r.level },
+    { key: "classcode", label: "Tutor group", value: (r) => r.classcode },
+    { key: "tutorname", label: "Tutor", value: (r) => r.tutorname },
+    { key: "endyear", label: "End year", value: (r) => r.endyear }
+  ];
+  function LearnerResults({ learners, term, showInactive, setShowInactive }) {
+    const { rows, inactiveCount } = (0, import_react3.useMemo)(() => split(learners, showInactive), [learners, showInactive]);
+    const activeCount = learners.length - inactiveCount;
+    const summary = showInactive ? `${plural(learners.length, "learner", "learners")} (${activeCount} active)` : `${plural(activeCount, "active learner", "active learners")}${inactiveCount ? ` \xB7 ${inactiveCount} inactive hidden` : ""}`;
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("section", { className: "sp-section", "aria-labelledby": "sp-h-learners", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "sp-section-head", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { id: "sp-h-learners", children: "Learners" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Toolbar, { summary, inactiveCount, showInactive, setShowInactive }),
+      rows.length ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(ResultTable, { caption: "Learners", rows, columns: LEARNER_COLS, href: learnerLink, defaultSort: { key: "name", dir: "asc" } }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Empty, { what: "learners", term, inactiveCount, showInactive, setShowInactive })
+    ] });
+  }
+  var COURSE_COLS = [
+    { key: "title", label: "Course", link: true, value: (r) => r.title, render: (r) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("b", { children: r.title }) },
+    { key: "uic", label: "Code", value: (r) => r.uic },
+    { key: "qualification", label: "Qualification", value: (r) => r.qualification },
+    { key: "acyear", label: "Year", value: (r) => r.acyear }
+  ];
+  var CLASS_COLS = [
+    { key: "classcode", label: "Class", link: true, value: (r) => r.classcode, render: (r) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("b", { children: r.classcode }) },
+    { key: "title", label: "Course", value: (r) => r.title },
+    { key: "uic", label: "Code", value: (r) => r.uic },
+    { key: "staffname", label: "Staff", value: (r) => r.staffname },
+    { key: "acyear", label: "Year", value: (r) => r.acyear }
+  ];
+  function CourseResults({ courses, classes, term, showInactive, setShowInactive }) {
+    const c = (0, import_react3.useMemo)(() => split(courses, showInactive), [courses, showInactive]);
+    const k = (0, import_react3.useMemo)(() => split(classes, showInactive), [classes, showInactive]);
+    const inactiveCount = c.inactiveCount + k.inactiveCount;
+    const summary = `${plural(c.rows.length, "course", "courses")} \xB7 ${plural(k.rows.length, "class", "classes")}${!showInactive && inactiveCount ? ` \xB7 ${inactiveCount} inactive hidden` : ""}`;
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Toolbar, { summary, inactiveCount, showInactive, setShowInactive }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("section", { className: "sp-section", "aria-labelledby": "sp-h-courses", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-section-head", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { id: "sp-h-courses", children: "Courses" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sp-count", children: c.rows.length })
+        ] }),
+        c.rows.length ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(ResultTable, { caption: "Courses", rows: c.rows, columns: COURSE_COLS, href: courseLink, defaultSort: { key: "acyear", dir: "desc" } }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Empty, { what: "courses", term, inactiveCount: c.inactiveCount, showInactive, setShowInactive })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("section", { className: "sp-section", "aria-labelledby": "sp-h-classes", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-section-head", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { id: "sp-h-classes", children: "Classes" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sp-count", children: k.rows.length })
+        ] }),
+        k.rows.length ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(ResultTable, { caption: "Classes", rows: k.rows, columns: CLASS_COLS, href: classLink, defaultSort: { key: "acyear", dir: "desc" } }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Empty, { what: "classes", term, inactiveCount: k.inactiveCount, showInactive, setShowInactive })
+      ] })
+    ] });
+  }
+
+  // src/App.jsx
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+  var THEME_KEY = "sapien-theme";
+  function initialTheme() {
+    const saved = load(THEME_KEY, null);
+    if (saved === "dark" || saved === "light") return saved;
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  function App({ rootEl }) {
+    const route = useHashRoute();
+    const [theme, setTheme] = (0, import_react4.useState)(initialTheme);
+    const lastSearch = (0, import_react4.useRef)("#/");
+    const searchScroll = (0, import_react4.useRef)(0);
+    const prevPage = (0, import_react4.useRef)(route.page);
+    (0, import_react4.useLayoutEffect)(() => {
+      rootEl.setAttribute("data-theme", theme);
+    }, [theme, rootEl]);
+    if (route.page === "search") lastSearch.current = window.location.hash || "#/";
+    (0, import_react4.useLayoutEffect)(() => {
+      if (prevPage.current === "search" && route.page !== "search") {
+        window.scrollTo(0, 0);
+      } else if (prevPage.current !== "search" && route.page === "search") {
+        window.scrollTo(0, searchScroll.current);
+      }
+      prevPage.current = route.page;
+    }, [route.page]);
+    (0, import_react4.useEffect)(() => {
+      if (route.page !== "search") return;
+      const on = () => searchScroll.current = window.scrollY;
+      window.addEventListener("scroll", on, { passive: true });
+      return () => window.removeEventListener("scroll", on);
+    }, [route.page]);
+    const toggleTheme = () => {
+      const next = theme === "dark" ? "light" : "dark";
+      setTheme(next);
+      save(THEME_KEY, next);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sp-app", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sp-top", children: [
+        route.page !== "search" && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("a", { className: "sp-btn ghost", href: lastSearch.current, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Icon, { name: "back", size: 16 }),
+          " Back to search"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+          "button",
+          {
+            type: "button",
+            className: "sp-icon-btn",
+            onClick: toggleTheme,
+            "aria-label": theme === "dark" ? "Switch to light mode" : "Switch to dark mode",
+            title: theme === "dark" ? "Light mode" : "Dark mode",
+            children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Icon, { name: theme === "dark" ? "sun" : "moon" })
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(SearchPage, { route, hidden: route.page !== "search" }),
+      route.page !== "search" && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Placeholder, { kind: route.page, id: route.id })
+    ] });
+  }
+  var KINDS = {
+    learner: { title: "Learner record", area: "learner area" },
+    course: { title: "Course", area: "course area" },
+    class: { title: "Class", area: "class area" },
+    tool: { title: "Dashboards & Tools", area: "tool" }
+  };
+  function Placeholder({ kind, id }) {
+    const item = kind === "tool" ? null : known.get(id);
+    const tool = kind === "tool" ? toolById(id) : null;
+    const k = KINDS[kind];
+    const headRef = (0, import_react4.useRef)(null);
+    (0, import_react4.useEffect)(() => {
+      headRef.current && headRef.current.focus();
+    }, [kind, id]);
+    let name = id;
+    const facts = [];
+    if (kind === "tool") {
+      name = tool ? tool.title : "Unknown tool";
+    } else if (item && kind === "learner") {
+      name = `${item.firstname} ${item.lastname}`;
+      facts.push(["Learner ID", item.pcode], ["Level", item.level], ["Tutor group", item.classcode], ["Tutor", item.tutorname]);
+    } else if (item && kind === "course") {
+      name = item.title;
+      facts.push(["Code", item.uic], ["Year", item.acyear], ["Qualification", item.qualification]);
+    } else if (item && kind === "class") {
+      name = `${item.classcode}: ${item.title}`;
+      facts.push(["Course", item.uic], ["Year", item.acyear], ["Staff", item.staffname]);
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sp-page", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "sp-eyebrow", children: k.title }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("h1", { className: "sp-page-title", tabIndex: -1, ref: headRef, children: [
+        name,
+        " ",
+        item && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(StatusPill, { active: item.active })
+      ] }),
+      facts.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("dl", { className: "sp-facts", children: facts.map(([label, v]) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("dt", { children: label }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("dd", { children: v || "\u2014" })
+      ] }, label)) }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sp-section sp-placeholder", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "Coming soon" }),
+        kind === "tool" ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { children: tool ? `${tool.blurb}. This page hasn't been built yet.` : `There is no tool called \u201C${id}\u201D.` }) : /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { children: [
+          "This page belongs to the ",
+          k.area,
+          ", which hasn't been upgraded yet."
+        ] })
+      ] })
+    ] });
+  }
+
+  // src/main.jsx
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  function mount() {
+    const el = document.getElementById("sapien-root");
+    if (!el) {
+      console.error('SAPIEN: no <div id="sapien-root"> on the page.');
+      return;
+    }
+    (0, import_client.createRoot)(el).render(/* @__PURE__ */ (0, import_jsx_runtime5.jsx)(App, { rootEl: el }));
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);
+  else mount();
+})();

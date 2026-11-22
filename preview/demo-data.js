@@ -74,7 +74,7 @@
           var st = staff[(si + c * 5 + years.indexOf(y)) % staff.length];
           var classcode = s[0] + (q[0] === 'ASL' ? '1' : '2') + (q[1] === 'Plus' ? 'PLS' : '') + 'AB'.charAt(c % 2) + (c + 1) + 'B' + (c + 1);
           classes.push({
-            acyear: y, uic: uic, title: title, qualification: q[1], iscurrent: iscurrent, uicyear: uic + '-' + y,
+            acyear: y, uic: uic, title: title, qualification: q[1], iscurrent: iscurrent, uicyear: classcode + '-' + y, // classes: classcode-acyear
             searchstring: uic + ' ' + title + ' ' + classcode + ' ' + st[0] + ' ' + st[1],
             classcode: classcode, staffcode: st[0], staffname: st[1],
           });

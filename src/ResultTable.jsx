@@ -51,7 +51,7 @@ export default function ResultTable({ caption, rows, columns, href, defaultSort 
                   className={r.active ? '' : 'inactive'}
                   onClick={(e) => {
                     if (e.target.closest('a')) return; // let the link handle itself
-                    window.location.hash = to;
+                    window.location.href = to; // a real page (deployed) or a #/ placeholder (preview)
                   }}
                 >
                   <td><StatusPill active={r.active} /></td>
