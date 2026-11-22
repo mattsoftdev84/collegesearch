@@ -1,4 +1,4 @@
-// Library bundle -> deploy/sapien-vendor.js. Must load before sapien.js.
+// Library bundle -> deploy/mainmenu-vendor.js. Must load before mainmenu.js.
 import * as React from 'react';
 import * as ReactDOMClient from 'react-dom/client';
 import * as JSXRuntime from 'react/jsx-runtime';

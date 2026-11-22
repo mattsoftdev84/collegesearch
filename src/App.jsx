@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { load, save, useHashRoute } from './hooks.js';
 import SearchPage, { known } from './SearchPage.jsx';
+import { toolById } from './tools.js';
 import { Icon, StatusPill } from './ui.jsx';
 
 const THEME_KEY = 'sapien-theme';
@@ -76,10 +77,12 @@ const KINDS = {
   learner: { title: 'Learner record', area: 'learner area' },
   course: { title: 'Course', area: 'course area' },
   class: { title: 'Class', area: 'class area' },
+  tool: { title: 'Dashboards & Tools', area: 'tool' },
 };
 
 function Placeholder({ kind, id }) {
-  const item = known.get(id);
+  const item = kind === 'tool' ? null : known.get(id);
+  const tool = kind === 'tool' ? toolById(id) : null;
   const k = KINDS[kind];
   const headRef = useRef(null);
   useEffect(() => {
@@ -88,7 +91,9 @@ function Placeholder({ kind, id }) {
 
   let name = id;
   const facts = [];
-  if (item && kind === 'learner') {
+  if (kind === 'tool') {
+    name = tool ? tool.title : 'Unknown tool';
+  } else if (item && kind === 'learner') {
     name = `${item.firstname} ${item.lastname}`;
     facts.push(['Learner ID', item.pcode], ['Level', item.level], ['Tutor group', item.classcode], ['Tutor', item.tutorname]);
   } else if (item && kind === 'course') {
@@ -117,7 +122,11 @@ function Placeholder({ kind, id }) {
       )}
       <div className="sp-section sp-placeholder">
         <h2>Coming soon</h2>
-        <p>This page belongs to the {k.area}, which hasn't been upgraded yet.</p>
+        {kind === 'tool' ? (
+          <p>{tool ? `${tool.blurb}. This page hasn't been built yet.` : `There is no tool called “${id}”.`}</p>
+        ) : (
+          <p>This page belongs to the {k.area}, which hasn't been upgraded yet.</p>
+        )}
       </div>
     </div>
   );

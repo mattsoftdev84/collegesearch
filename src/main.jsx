@@ -1,4 +1,4 @@
-// App bundle -> deploy/sapien.js. Needs, in order: DataMethods.js, sapien-vendor.js.
+// App bundle -> deploy/mainmenu.js. Needs, in order: DataMethods.js, mainmenu-vendor.js.
 // Mounts into <div id="sapien-root"></div>.
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';

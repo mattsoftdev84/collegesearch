@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { searchClasses, searchCourses, searchLearners } from './api.js';
 import { detailHash, parseHash, searchHash, useDebounced } from './hooks.js';
 import ResultTable from './ResultTable.jsx';
+import { filterTools } from './tools.js';
 import { Icon, Spinner, Switch } from './ui.jsx';
 
 export const MIN_CHARS = 3;
@@ -9,9 +10,12 @@ const DEBOUNCE_MS = 300;
 const CACHE_MS = 60_000;
 
 const MODES = {
-  learners: { label: 'Search Learners', placeholder: 'Name, learner ID or tutor group…' },
-  courses: { label: 'Search Courses', placeholder: 'Course code, title, class code or staff…' },
+  learners: { label: 'Search Learners', icon: 'user', placeholder: 'Name, learner ID or tutor group…' },
+  courses: { label: 'Search Courses', icon: 'book', placeholder: 'Course code, title, class code or staff…' },
+  tools: { label: 'Dashboards & Tools', icon: 'grid', placeholder: 'Filter dashboards and tools…' },
 };
+
+export const toolHref = (t) => t.href || detailHash('tool', t.id);
 
 // Short-lived cache so backspacing / switching modes doesn't re-hit the server.
 const cache = new Map();
@@ -46,8 +50,10 @@ export default function SearchPage({ route, hidden }) {
   const [retry, setRetry] = useState(0);
   const inputRef = useRef(null);
 
+  const isTools = mode === 'tools';
   const term = useDebounced(q.trim(), DEBOUNCE_MS);
-  const ready = term.length >= MIN_CHARS;
+  const ready = !isTools && term.length >= MIN_CHARS; // tools filter locally, no server call
+  const tools = useMemo(() => (isTools ? filterTools(q) : []), [isTools, q]);
 
   // Keep the URL in step with the search (replaceState: no history spam, no hashchange).
   useEffect(() => {
@@ -89,12 +95,26 @@ export default function SearchPage({ route, hidden }) {
   // Results for the current mode (keep showing the previous ones while a new search loads).
   const data = state.data && state.mode === mode ? state.data : null;
   const loading = state.status === 'loading';
-  const hasResults = ready || q.trim().length > 0;
+  const hasResults = isTools || ready || q.trim().length > 0;
 
   const onKeyDown = (e) => {
-    if (e.key === 'Enter') e.preventDefault(); // would submit the WebForms form
+    if (e.key === 'Enter') {
+      e.preventDefault(); // would submit the WebForms form
+      // In tools mode Enter opens the top match.
+      if (isTools && q.trim() && tools.length) window.location.href = toolHref(tools[0]);
+    }
     if (e.key === 'Escape') setQ('');
   };
+
+  const hint = isTools
+    ? q.trim() && tools.length
+      ? 'Press Enter to open the first match'
+      : '\u00a0'
+    : q.trim().length > 0 && q.trim().length < MIN_CHARS
+    ? `Type at least ${MIN_CHARS} characters to search`
+    : !q
+    ? 'Results appear as you type'
+    : '\u00a0';
 
   return (
     <div className="sp-search" hidden={hidden}>
@@ -126,7 +146,7 @@ export default function SearchPage({ route, hidden }) {
                   inputRef.current && inputRef.current.focus();
                 }}
               >
-                <Icon name={key === 'learners' ? 'user' : 'book'} size={16} />
+                <Icon name={m.icon} size={16} />
                 {m.label}
               </button>
             ))}
@@ -153,15 +173,11 @@ export default function SearchPage({ route, hidden }) {
               </button>
             )}
           </div>
-          <p className="sp-hint" aria-live="polite">
-            {q.trim().length > 0 && q.trim().length < MIN_CHARS
-              ? `Type at least ${MIN_CHARS} characters to search`
-              : !q
-              ? 'Results appear as you type'
-              : ' '}
-          </p>
+          <p className="sp-hint" aria-live="polite">{hint}</p>
         </div>
       </div>
+
+      {isTools && <ToolList tools={tools} q={q.trim()} clear={() => { setQ(''); inputRef.current.focus(); }} />}
 
       {ready && (
         <div className="sp-results" aria-busy={loading}>
@@ -180,6 +196,34 @@ export default function SearchPage({ route, hidden }) {
         </div>
       )}
     </div>
+  );
+}
+
+function ToolList({ tools, q, clear }) {
+  return (
+    <section className="sp-results sp-tools-wrap" aria-label="Dashboards and tools">
+      {tools.length ? (
+        <ul className="sp-tools">
+          {tools.map((t) => (
+            <li key={t.id}>
+              <a className="sp-tool" href={toolHref(t)}>
+                <span className="sp-tool-icon"><Icon name={t.icon} size={20} /></span>
+                <span className="sp-tool-text">
+                  <b>{t.title}</b>
+                  <span>{t.blurb}</span>
+                </span>
+                <span className="sp-tool-go"><Icon name="arrow" size={16} /></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="sp-empty">
+          No dashboards or tools match “{q}”.{' '}
+          <button type="button" className="sp-link" onClick={clear}>Clear filter</button>
+        </div>
+      )}
+    </section>
   );
 }
 

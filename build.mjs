@@ -1,7 +1,7 @@
 // Builds the files that get copied into the WebForms project:
-//   deploy/sapien-vendor.js  – React + ReactDOM (changes only when libraries are upgraded)
-//   deploy/sapien.js         – the SAPIEN app code
-//   deploy/sapien.css        – styles (all scoped under #sapien-root)
+//   deploy/mainmenu-vendor.js  – React + ReactDOM (changes only when libraries are upgraded)
+//   deploy/mainmenu.js         – the SAPIEN app code
+//   deploy/mainmenu.css        – styles (all scoped under #sapien-root)
 //
 //   node build.mjs           one-off production build
 //   node build.mjs --watch   rebuild on change
@@ -41,16 +41,16 @@ const common = {
 };
 
 const configs = [
-  { ...common, entryPoints: ['src/vendor.js'], outfile: 'deploy/sapien-vendor.js', format: 'iife' },
+  { ...common, entryPoints: ['src/vendor.js'], outfile: 'deploy/mainmenu-vendor.js', format: 'iife' },
   {
     ...common,
     entryPoints: ['src/main.jsx'],
-    outfile: 'deploy/sapien.js',
+    outfile: 'deploy/mainmenu.js',
     format: 'iife',
     jsx: 'automatic',
     plugins: [useVendorGlobals],
   },
-  { ...common, entryPoints: ['src/app.css'], outfile: 'deploy/sapien.css' },
+  { ...common, entryPoints: ['src/app.css'], outfile: 'deploy/mainmenu.css' },
 ];
 
 if (!watch) {

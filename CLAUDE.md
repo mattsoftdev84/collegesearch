@@ -4,7 +4,7 @@ Guidance for Claude Code when working in this repository.
 
 ## Project overview
 
-**SAPIEN**: a new React search page for an existing ASP.NET **WebForms** site (a college system). Users can search learners, or courses and classes, and results update as they type.
+**SAPIEN**: a new React search page for an existing ASP.NET **WebForms** site (a college system). Users can search learners, or courses and classes, and results update as they type. A third tab, **Dashboards & Tools**, lists links to other parts of the site.
 
 - Solo developer. **The user builds the database tables and the WebMethod endpoints in the separate WebForms project.** This repo only builds the frontend.
 - This repo produces the static files in `deploy/`, which get **copied into the WebForms project by hand**.
@@ -30,14 +30,16 @@ Preview notes:
 
 ```
 src/
-  vendor.js        → deploy/sapien-vendor.js  React + ReactDOM, exposed as window.SapienVendor
-  main.jsx         → deploy/sapien.js         App; imports of react/* resolve to window.SapienVendor (esbuild plugin in build.mjs)
-  app.css          → deploy/sapien.css        All selectors scoped under #sapien-root
+  vendor.js        → deploy/mainmenu-vendor.js  React + ReactDOM, exposed as window.SapienVendor
+  main.jsx         → deploy/mainmenu.js         App; imports of react/* resolve to window.SapienVendor (esbuild plugin in build.mjs)
+  app.css          → deploy/mainmenu.css        All selectors scoped under #sapien-root
   App.jsx          Hash router, theme toggle, placeholder detail pages
-  SearchPage.jsx   Title, mode switch, search box, debounced search, result lists
+  SearchPage.jsx   Title, mode switch, search box, debounced search, result lists, tool cards
+  tools.js         Dashboards & Tools list (id, title, icon, blurb, href) + local filter
   ResultTable.jsx  Sortable results table (active rows first, max 200 rendered)
   api.js           Wrappers over window.callWebMethod plus row normalisation
   hooks.js         useDebounced, hash routing helpers, safe localStorage
+docs/MainMenuB.aspx.txt     Full markup for the main project's page
 library/js/DataMethods.js   Mirror of the main project's file (used only by the preview)
 preview/                    index.html, demo-data.js, mock-pagemethods.js
 .devcontainer/              Dev container (Codespaces + local Docker): Node 24, Claude Code, port 8000, npm install on create. Don't delete: without it the Codespace rebuilds with no Node.
@@ -63,18 +65,26 @@ Calls go through `window.callWebMethod(name, { search })` from `library/js/DataM
 
 Routes live in the hash so they never clash with WebForms/IIS:
 - `#/?mode=courses&q=fre&inactive=1` is the search page. Its state is kept in the URL with `replaceState`, so Back restores it.
-- `#/learner/<pcode>`, `#/course/<uicyear>` and `#/class/<uicyear>|<classcode>` are placeholder pages. The real pages will be built later in other parts of the site.
+- `#/?mode=tools&q=dash` is the Dashboards & Tools list. The box filters it locally (no server call, no 3-char minimum), and Enter opens the top match.
+- `#/learner/<pcode>`, `#/course/<uicyear>`, `#/class/<uicyear>|<classcode>` and `#/tool/<id>` are placeholder pages. When a tool's real page exists, set its `href` in `src/tools.js` and the card links there instead. The real pages will be built later in other parts of the site.
 
 ## WebForms integration (in the main project)
 
+The page is `MainMenuB.aspx`. Copy the 3 files from `deploy/` into `library/js/mainmenu/` in the main project. The full page markup is in `docs/MainMenuB.aspx.txt`. In short:
+
 ```html
-<asp:ScriptManager runat="server" EnablePageMethods="true" />
-<link rel="stylesheet" href="…/sapien.css" />
-<div id="sapien-root"></div>
-<script src="…/library/js/DataMethods.js"></script>
-<script src="…/sapien-vendor.js"></script>   <!-- must load before sapien.js -->
-<script src="…/sapien.js"></script>
+<link rel="stylesheet" href="library/js/mainmenu/mainmenu.css?v=0.1.0" />
+<form runat="server">
+  <asp:ScriptManager runat="server" EnablePageMethods="true" />
+  <div id="sapien-root"></div>
+</form>
+<script src="library/js/DataMethods.js"></script>
+<script src="library/js/mainmenu/mainmenu-vendor.js?v=0.1.0"></script>   <!-- must load before mainmenu.js -->
+<script src="library/js/mainmenu/mainmenu.js?v=0.1.0"></script>
 ```
+
+- The WebMethods (`GetLearners`, `GetCourses`, `GetClasses`) must be `public static` `[WebMethod]`s in `MainMenuB.aspx.cs`, because `PageMethods` calls the page it's on.
+- Bump `?v=` on the three file links (keep it in step with `package.json` `version`) each time new files are copied over, so browsers don't serve stale cached copies.
 
 ## Conventions / gotchas
 
@@ -89,13 +99,14 @@ Routes live in the hash so they never clash with WebForms/IIS:
 
 - `dob` in the sample CSV is `00:00.0`, which looks mangled by Excel. What is the real format? It isn't displayed yet.
 - Do learners ever come back as multiple rows (for example, one per class)? The frontend currently keeps the first row per `pcode`.
-- What are the real URLs for learner, course and class pages once they exist? They will replace the placeholders.
+- What are the real URLs for learner, course and class pages, and for each dashboard/tool, once they exist? They will replace the placeholders.
 
 ## Roadmap / status
 
 - [x] Dev container, build pipeline, preview with demo data
 - [x] Search page: learners / courses+classes, live search, active toggle, dark mode
 - [x] Placeholder detail pages
+- [x] Dashboards & Tools tab with placeholder pages
 - [ ] Backend WebMethods wired up in the main project (user)
 - [ ] Real learner, course and class pages
 
@@ -104,3 +115,6 @@ Routes live in the hash so they never clash with WebForms/IIS:
 - 2026-11-22: React 19 + esbuild. Output split into a vendor bundle and an app bundle so app deploys don't re-ship React.
 - 2026-11-22: Search on the server for each debounced keystroke (3+ chars) instead of loading all learners up front. Smaller payloads, and personal data stays on the server unless it matches a search.
 - 2026-11-22: Hash routing, so the app needs no server route configuration.
+- 2026-11-22: Dashboards & Tools is a third tab with a fixed list in `src/tools.js`, filtered in the browser. It needs no WebMethod.
+- 2026-11-22: Deployed as the "mainmenu" feature. The output files are `mainmenu-vendor.js`, `mainmenu.js` and `mainmenu.css`, copied to `library/js/mainmenu/` and loaded by `MainMenuB.aspx`. The UI name (SAPIEN), `#sapien-root` and `window.SapienVendor` are unchanged.
+- 2026-11-22: Logo brackets are white in dark mode and stay blue in light mode, because white would vanish on the off-white background. Letters fade in without sliding.
