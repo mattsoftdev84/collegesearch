@@ -3,8 +3,8 @@ import { searchClasses, searchCourses, searchLearners } from './api.js';
 import { detailHash, parseHash, searchHash, useDebounced } from './hooks.js';
 import ResultTable from './ResultTable.jsx';
 import { classLink, courseLink, learnerLink } from './links.js';
-import { filterTools } from './tools.js';
-import { Icon, Spinner, Switch } from './ui.jsx';
+import { filterTools, TOOLS_FILE, useTools } from './tools.js';
+import { FALLBACK_ICON, hasIcon, Icon, Spinner, Switch } from './ui.jsx';
 
 export const MIN_CHARS = 3;
 const DEBOUNCE_MS = 300;
@@ -12,11 +12,12 @@ const CACHE_MS = 60_000;
 
 const MODES = {
   learners: { label: 'Search Learners', icon: 'user', placeholder: 'Name, learner ID or tutor group…' },
-  courses: { label: 'Search Courses', icon: 'book', placeholder: 'Course code, title, class code or staff…' },
-  tools: { label: 'Dashboards & Tools', icon: 'grid', placeholder: 'Filter dashboards and tools…' },
+  courses: { label: 'Search Courses', icon: 'book-open', placeholder: 'Course code, title, class code or staff…' },
+  tools: { label: 'Dashboards & Tools', icon: 'layout-grid', placeholder: 'Filter dashboards and tools…' },
 };
 
-export const toolHref = (t) => t.href || detailHash('tool', t.id);
+// A tool with no link opens its "coming soon" placeholder page.
+export const toolHref = (t) => t.link || detailHash('tool', t.id);
 
 // Short-lived cache so backspacing / switching modes doesn't re-hit the server.
 const cache = new Map();
@@ -54,7 +55,8 @@ export default function SearchPage({ route, hidden }) {
   const isTools = mode === 'tools';
   const term = useDebounced(q.trim(), DEBOUNCE_MS);
   const ready = !isTools && term.length >= MIN_CHARS; // tools filter locally, no server call
-  const tools = useMemo(() => (isTools ? filterTools(q) : []), [isTools, q]);
+  const toolList = useTools(isTools); // loads mainmenu-tools.json the first time tools are shown
+  const tools = useMemo(() => (isTools ? filterTools(toolList.tools, q) : []), [isTools, toolList.tools, q]);
 
   // Keep the URL in step with the search (replaceState: no history spam, no hashchange).
   useEffect(() => {
@@ -143,6 +145,7 @@ export default function SearchPage({ route, hidden }) {
                 aria-pressed={mode === key}
                 className={mode === key ? 'on' : ''}
                 onClick={() => {
+                  if (key !== mode) setQ(''); // each option starts with an empty box
                   setMode(key);
                   inputRef.current && inputRef.current.focus();
                 }}
@@ -178,7 +181,7 @@ export default function SearchPage({ route, hidden }) {
         </div>
       </div>
 
-      {isTools && <ToolList tools={tools} q={q.trim()} clear={() => { setQ(''); inputRef.current.focus(); }} />}
+      {isTools && <ToolList status={toolList.status} error={toolList.error} retry={toolList.retry} total={toolList.tools.length} tools={tools} q={q.trim()} clear={() => { setQ(''); inputRef.current.focus(); }} />}
 
       {ready && (
         <div className="sp-results" aria-busy={loading}>
@@ -200,20 +203,29 @@ export default function SearchPage({ route, hidden }) {
   );
 }
 
-function ToolList({ tools, q, clear }) {
+function ToolList({ status, error, retry, total, tools, q, clear }) {
   return (
     <section className="sp-results sp-tools-wrap" aria-label="Dashboards and tools">
-      {tools.length ? (
+      {status === 'loading' ? (
+        <p className="sp-msg"><Spinner /> Loading…</p>
+      ) : status === 'error' ? (
+        <div className="sp-error" role="alert">
+          <span>Couldn't load the dashboards and tools list. {error}</span>
+          <button type="button" className="sp-btn small" onClick={retry}>Try again</button>
+        </div>
+      ) : total === 0 ? (
+        <div className="sp-empty">No dashboards or tools have been added yet ({TOOLS_FILE} is empty).</div>
+      ) : tools.length ? (
         <ul className="sp-tools">
           {tools.map((t) => (
             <li key={t.id}>
               <a className="sp-tool" href={toolHref(t)}>
-                <span className="sp-tool-icon"><Icon name={t.icon} size={20} /></span>
+                <span className="sp-tool-icon"><Icon name={hasIcon(t.icon) ? t.icon : FALLBACK_ICON} size={20} /></span>
                 <span className="sp-tool-text">
                   <b>{t.title}</b>
-                  <span>{t.blurb}</span>
+                  {t.description && <span>{t.description}</span>}
                 </span>
-                <span className="sp-tool-go"><Icon name="arrow" size={16} /></span>
+                <span className="sp-tool-go"><Icon name="arrow-right" size={16} /></span>
               </a>
             </li>
           ))}

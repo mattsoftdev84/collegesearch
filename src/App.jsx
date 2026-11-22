@@ -1,15 +1,15 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { load, save, useHashRoute } from './hooks.js';
 import SearchPage, { known } from './SearchPage.jsx';
-import { toolById } from './tools.js';
-import { Icon, StatusPill } from './ui.jsx';
+import { useTools } from './tools.js';
+import { FALLBACK_ICON, hasIcon, Icon, Spinner, StatusPill } from './ui.jsx';
 
 const THEME_KEY = 'sapien-theme';
 
 function initialTheme() {
   const saved = load(THEME_KEY, null);
   if (saved === 'dark' || saved === 'light') return saved;
-  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return 'dark'; // dark by default; the toggle remembers a choice of light
 }
 
 export default function App({ rootEl }) {
@@ -53,7 +53,7 @@ export default function App({ rootEl }) {
       <div className="sp-top">
         {route.page !== 'search' && (
           <a className="sp-btn ghost" href={lastSearch.current}>
-            <Icon name="back" size={16} /> Back to search
+            <Icon name="arrow-left" size={16} /> Back to search
           </a>
         )}
         <button
@@ -68,7 +68,8 @@ export default function App({ rootEl }) {
       </div>
 
       <SearchPage route={route} hidden={route.page !== 'search'} />
-      {route.page !== 'search' && <Placeholder kind={route.page} id={route.id} />}
+      {route.page === 'icons' && <IconGallery />}
+      {route.page !== 'search' && route.page !== 'icons' && <Placeholder kind={route.page} id={route.id} />}
     </div>
   );
 }
@@ -82,7 +83,8 @@ const KINDS = {
 
 function Placeholder({ kind, id }) {
   const item = kind === 'tool' ? null : known.get(id);
-  const tool = kind === 'tool' ? toolById(id) : null;
+  const toolList = useTools(kind === 'tool');
+  const tool = kind === 'tool' ? toolList.tools.find((t) => t.id === id) : null;
   const k = KINDS[kind];
   const headRef = useRef(null);
   useEffect(() => {
@@ -92,7 +94,7 @@ function Placeholder({ kind, id }) {
   let name = id;
   const facts = [];
   if (kind === 'tool') {
-    name = tool ? tool.title : 'Unknown tool';
+    name = tool ? tool.title : toolList.status === 'loading' ? 'Loading…' : 'Unknown tool';
   } else if (item && kind === 'learner') {
     name = `${item.firstname} ${item.lastname}`;
     facts.push(['Learner ID', item.pcode], ['Level', item.level], ['Tutor group', item.classcode], ['Tutor', item.tutorname]);
@@ -123,11 +125,75 @@ function Placeholder({ kind, id }) {
       <div className="sp-section sp-placeholder">
         <h2>Coming soon</h2>
         {kind === 'tool' ? (
-          <p>{tool ? `${tool.blurb}. This page hasn't been built yet.` : `There is no tool called “${id}”.`}</p>
+          <p>
+            {toolList.status === 'loading' ? (
+              <Spinner />
+            ) : tool ? (
+              <>{tool.description && <>{tool.description.replace(/\.$/, '')}. </>}This page hasn't been built yet.</>
+            ) : (
+              `There is no tool called “${id}”.`
+            )}
+          </p>
         ) : (
           <p>This page belongs to the {k.area}, which hasn't been upgraded yet.</p>
         )}
       </div>
+    </div>
+  );
+}
+
+// #/icons: checks the icon names in mainmenu-tools.json, and lets you try others.
+function IconGallery() {
+  const toolList = useTools(true);
+  const [name, setName] = useState('');
+  const n = name.trim();
+  return (
+    <div className="sp-page">
+      <p className="sp-eyebrow">Dashboards &amp; Tools</p>
+      <h1 className="sp-page-title">Icons</h1>
+      <p className="sp-page-intro">
+        Icons come from <a href="https://lucide.dev/icons" target="_blank" rel="noopener noreferrer">Lucide</a>. Find one there and use its
+        name as <code>"icon"</code> in <code>mainmenu-tools.json</code>, e.g. <code>layout-dashboard</code>. A name that isn't found
+        shows <code>{FALLBACK_ICON}</code>.
+      </p>
+
+      <label className="sp-icon-try">
+        <span>Try a name</span>
+        <input
+          type="text"
+          value={name}
+          placeholder="e.g. calendar-days"
+          spellCheck="false"
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
+        />
+        {n && (hasIcon(n) ? (
+          <span className="sp-icon-ok"><Icon name={n} size={22} /> Found</span>
+        ) : (
+          <span className="sp-icon-bad">Not a Lucide icon</span>
+        ))}
+      </label>
+
+      <h2 className="sp-icon-h">In mainmenu-tools.json</h2>
+      {toolList.status === 'loading' ? (
+        <Spinner />
+      ) : toolList.status === 'error' ? (
+        <p className="sp-icon-bad">{toolList.error}</p>
+      ) : (
+        <ul className="sp-icon-grid">
+          {toolList.tools.map((t) => (
+            <li key={t.id}>
+              <span className="sp-tool-icon"><Icon name={hasIcon(t.icon) ? t.icon : FALLBACK_ICON} size={20} /></span>
+              <span>
+                <b>{t.title}</b>
+                <br />
+                <code>{t.icon || '(none)'}</code>
+                {!hasIcon(t.icon) && <span className="sp-icon-bad"> not found</span>}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

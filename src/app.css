@@ -677,6 +677,68 @@
   transform: translateX(2px);
 }
 
+/* icon gallery (#/icons) */
+#sapien-root .sp-page-intro {
+  margin-bottom: 16px;
+  color: var(--ink-2);
+}
+#sapien-root code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--chip-bg);
+  font-family: Consolas, "Cascadia Mono", Menlo, monospace;
+  font-size: 13px;
+}
+#sapien-root .sp-icon-try {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+#sapien-root .sp-icon-try input {
+  width: min(260px, 100%);
+  min-height: 34px;
+  padding: 4px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 400;
+}
+#sapien-root .sp-icon-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--good);
+}
+#sapien-root .sp-icon-bad {
+  color: var(--bad);
+  font-weight: 600;
+}
+#sapien-root .sp-icon-h {
+  margin-bottom: 10px;
+}
+#sapien-root .sp-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+#sapien-root .sp-icon-grid li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
 /* ---- Placeholder pages ---------------------------------------------------- */
 #sapien-root .sp-page {
   max-width: 900px;

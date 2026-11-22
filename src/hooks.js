@@ -15,6 +15,7 @@ export function useDebounced(value, ms) {
 //                                         Back from another page restores it)
 //   #/?mode=tools&q=dash                  Dashboards & Tools list (q filters it)
 //   #/learner/<pcode>  #/course/<id>  #/class/<id>  #/tool/<id>   placeholder pages
+//   #/icons                               every icon name usable in mainmenu-tools.json
 
 const MODES = ['learners', 'courses', 'tools'];
 
@@ -23,6 +24,7 @@ export function parseHash(hash = window.location.hash) {
   const [path, qs = ''] = raw.split('?');
   const parts = path.split('/').filter(Boolean).map(decodeURIComponent);
   const params = new URLSearchParams(qs);
+  if (parts[0] === 'icons') return { page: 'icons' };
   if (parts.length >= 2 && ['learner', 'course', 'class', 'tool'].includes(parts[0])) {
     return { page: parts[0], id: parts.slice(1).join('/') };
   }

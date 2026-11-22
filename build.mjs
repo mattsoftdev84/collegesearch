@@ -1,7 +1,8 @@
 // Builds the files that get copied into the WebForms project:
-//   deploy/mainmenu-vendor.js  – React + ReactDOM (changes only when libraries are upgraded)
+//   deploy/mainmenu-vendor.js  – React + ReactDOM + Lucide icons (changes only when libraries are upgraded)
 //   deploy/mainmenu.js         – the SAPIEN app code
 //   deploy/mainmenu.css        – styles (all scoped under #sapien-root)
+//   deploy/mainmenu-tools.json – Dashboards & Tools list, loaded at runtime (edit it on the server)
 //
 // mainmenu.js and mainmenu.css are NOT minified, so they stay readable in the
 // WebForms project. mainmenu.css is a straight copy of src/app.css (comments
@@ -23,6 +24,7 @@ const vendorGlobals = {
   'react': 'React',
   'react-dom/client': 'ReactDOMClient',
   'react/jsx-runtime': 'JSXRuntime',
+  'lucide': 'Lucide',
 };
 const useVendorGlobals = {
   name: 'use-vendor-globals',
@@ -59,25 +61,30 @@ const configs = [
   },
 ];
 
-// CSS is copied as-is: it's one self-contained file, and esbuild would strip the comments.
-const CSS_SRC = 'src/app.css';
-const CSS_OUT = 'deploy/mainmenu.css';
-const copyCss = () => {
-  copyFileSync(CSS_SRC, CSS_OUT);
-  console.log(`  ${CSS_OUT} (copied from ${CSS_SRC})`);
+// Copied as-is. The CSS is one self-contained file (esbuild would strip its
+// comments); the JSON is read by the app at runtime.
+const COPIES = [
+  ['src/app.css', 'deploy/mainmenu.css'],
+  ['src/mainmenu-tools.json', 'deploy/mainmenu-tools.json'],
+];
+const copy = ([from, to]) => {
+  copyFileSync(from, to);
+  console.log(`  ${to} (copied from ${from})`);
 };
-copyCss();
+COPIES.forEach(copy);
 
 if (!watch) {
   await Promise.all(configs.map((c) => esbuild.build(c)));
 } else {
   const ctxs = await Promise.all(configs.map((c) => esbuild.context(c)));
   await Promise.all(ctxs.map((c) => c.watch()));
-  let t;
-  watchFile(CSS_SRC, () => {
-    clearTimeout(t);
-    t = setTimeout(copyCss, 50); // editors fire several events per save
-  });
+  for (const pair of COPIES) {
+    let t;
+    watchFile(pair[0], () => {
+      clearTimeout(t);
+      t = setTimeout(() => copy(pair), 50); // editors fire several events per save
+    });
+  }
   if (serve) {
     const { port } = await ctxs[1].serve({ servedir: '.', port: 8000 });
     console.log(`\n  Preview: http://localhost:${port}/preview/\n`);

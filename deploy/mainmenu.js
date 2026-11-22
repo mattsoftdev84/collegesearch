@@ -43,6 +43,13 @@
     }
   });
 
+  // vendor-global:lucide
+  var require_lucide = __commonJS({
+    "vendor-global:lucide"(exports, module) {
+      module.exports = window.SapienVendor.Lucide;
+    }
+  });
+
   // vendor-global:react/jsx-runtime
   var require_jsx_runtime = __commonJS({
     "vendor-global:react/jsx-runtime"(exports, module) {
@@ -54,7 +61,7 @@
   var import_client = __toESM(require_client());
 
   // src/App.jsx
-  var import_react4 = __toESM(require_react());
+  var import_react6 = __toESM(require_react());
 
   // src/hooks.js
   var import_react = __toESM(require_react());
@@ -72,6 +79,7 @@
     const [path, qs = ""] = raw.split("?");
     const parts = path.split("/").filter(Boolean).map(decodeURIComponent);
     const params = new URLSearchParams(qs);
+    if (parts[0] === "icons") return { page: "icons" };
     if (parts.length >= 2 && ["learner", "course", "class", "tool"].includes(parts[0])) {
       return { page: parts[0], id: parts.slice(1).join("/") };
     }
@@ -119,7 +127,7 @@
   }
 
   // src/SearchPage.jsx
-  var import_react3 = __toESM(require_react());
+  var import_react5 = __toESM(require_react());
 
   // src/api.js
   function asRows(data) {
@@ -197,94 +205,19 @@
   }
 
   // src/ResultTable.jsx
-  var import_react2 = __toESM(require_react());
+  var import_react3 = __toESM(require_react());
 
   // src/ui.jsx
+  var import_react2 = __toESM(require_react());
+  var import_lucide = __toESM(require_lucide());
   var import_jsx_runtime = __toESM(require_jsx_runtime());
+  var toKey = (name) => String(name || "").trim().replace(/(^|[-_\s]+)([a-z0-9])/gi, (_, sep, c) => c.toUpperCase());
+  var FALLBACK_ICON = "layout-grid";
+  var hasIcon = (name) => Object.prototype.hasOwnProperty.call(import_lucide.icons, toKey(name));
   function Icon({ name, size = 18 }) {
-    const p = { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true, focusable: "false" };
-    switch (name) {
-      case "search":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "11", cy: "11", r: "7" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m20 20-3.5-3.5" })
-        ] });
-      case "x":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", { ...p, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M18 6 6 18M6 6l12 12" }) });
-      case "sun":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "12", cy: "12", r: "4" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" })
-        ] });
-      case "moon":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", { ...p, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" }) });
-      case "back":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", { ...p, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M19 12H5M12 19l-7-7 7-7" }) });
-      case "user":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "12", cy: "8", r: "4" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M4 21a8 8 0 0 1 16 0" })
-        ] });
-      case "book":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M4 19.5V21h16" })
-        ] });
-      case "grid":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "3", y: "3", width: "7", height: "7", rx: "1.5" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "14", y: "3", width: "7", height: "7", rx: "1.5" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "3", y: "14", width: "7", height: "7", rx: "1.5" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "14", y: "14", width: "7", height: "7", rx: "1.5" })
-        ] });
-      case "gauge":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M3.5 17a9 9 0 1 1 17 0" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m12 13 4-5" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "12", cy: "13", r: "1.2" })
-        ] });
-      case "users":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", { cx: "9", cy: "8", r: "3.5" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M2.5 20a6.5 6.5 0 0 1 13 0" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14a6.5 6.5 0 0 1 3.5 6" })
-        ] });
-      case "clipboard":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "5", y: "4", width: "14", height: "17", rx: "2" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M9 4V3h6v1M9 11h6M9 15h4" })
-        ] });
-      case "check":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "3", y: "3", width: "18", height: "18", rx: "3" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m8 12 3 3 5-6" })
-        ] });
-      case "calendar":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "3", y: "5", width: "18", height: "16", rx: "2" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M3 10h18M8 3v4M16 3v4" })
-        ] });
-      case "shield":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6z" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m9 12 2 2 4-4" })
-        ] });
-      case "home":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M3 11 12 4l9 7" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M5 10v10h14V10" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M10 20v-5h4v5" })
-        ] });
-      case "layers":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...p, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m12 3 9 5-9 5-9-5z" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "m3 13 9 5 9-5" })
-        ] });
-      case "arrow":
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", { ...p, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M5 12h14M13 6l6 6-6 6" }) });
-      default:
-        return null;
-    }
+    const node = hasIcon(name) ? import_lucide.icons[toKey(name)] : null;
+    if (!node) return null;
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", focusable: "false", children: node.map(([tag, attrs], i) => (0, import_react2.createElement)(tag, { key: i, ...attrs })) });
   }
   function StatusPill({ active }) {
     return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sp-status " + (active ? "on" : "off"), children: active ? "Active" : "Inactive" });
@@ -303,8 +236,8 @@
   var import_jsx_runtime2 = __toESM(require_jsx_runtime());
   var ROW_LIMIT = 200;
   function ResultTable({ caption, rows, columns, href, defaultSort }) {
-    const [sort, setSort] = (0, import_react2.useState)(defaultSort);
-    const sorted = (0, import_react2.useMemo)(() => {
+    const [sort, setSort] = (0, import_react3.useState)(defaultSort);
+    const sorted = (0, import_react3.useMemo)(() => {
       const col = columns.find((c) => c.key === sort.key);
       if (!col) return rows;
       const dir = sort.dir === "desc" ? -1 : 1;
@@ -370,22 +303,67 @@
   var classLink = (r) => link("class", r.uicyear);
 
   // src/tools.js
-  var TOOLS = [
-    { id: "staff-dashboard", title: "Staff Dashboard", icon: "gauge", blurb: "Your classes, tasks and alerts at a glance", href: null },
-    { id: "tutor-dashboard", title: "Tutor Dashboard", icon: "users", blurb: "Tutor group overview, attendance and concerns", href: null },
-    { id: "enrolment", title: "Enrolment System", icon: "clipboard", blurb: "Applications, enrolments and transfers", href: null },
-    { id: "attendance", title: "Attendance Tracker", icon: "check", blurb: "Registers, absences and attendance trends", href: null },
-    { id: "staff-timetables", title: "Staff Timetables", icon: "calendar", blurb: "Look up any staff member\u2019s timetable", href: null },
-    { id: "access-arrangements", title: "Access Arrangements Dashboard", icon: "shield", blurb: "Exam access arrangements and support needs", href: null },
-    { id: "parent-portal", title: "Parent Portal Accounts", icon: "home", blurb: "Manage parent and carer portal access", href: null },
-    { id: "custom-cohorts", title: "Manage Custom Cohorts", icon: "layers", blurb: "Build and maintain custom groups of learners", href: null }
-  ];
-  var toolById = (id) => TOOLS.find((t) => t.id === id);
-  function filterTools(q) {
+  var import_react4 = __toESM(require_react());
+  var scriptSrc = typeof document !== "undefined" && document.currentScript ? document.currentScript.src : "";
+  var TOOLS_FILE = "mainmenu-tools.json";
+  var toolsUrl = () => new URL(TOOLS_FILE, scriptSrc || window.location.href).href;
+  var str2 = (v) => v == null ? "" : String(v).trim();
+  var slug = (s) => s.toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "tool";
+  function normalise(data) {
+    if (!Array.isArray(data)) throw new Error(`${TOOLS_FILE} should contain a list: [ { ... }, { ... } ]`);
+    const used = /* @__PURE__ */ new Set();
+    const out = [];
+    for (const t of data) {
+      if (!t || typeof t !== "object") continue;
+      const title = str2(t.title);
+      if (!title) continue;
+      let id = slug(title);
+      for (let n = 2; used.has(id); n++) id = `${slug(title)}-${n}`;
+      used.add(id);
+      out.push({ id, title, description: str2(t.description), icon: str2(t.icon), link: str2(t.link) });
+    }
+    return out;
+  }
+  var pending = null;
+  function loadTools() {
+    if (!pending) {
+      pending = fetch(toolsUrl(), { cache: "no-cache", credentials: "same-origin" }).then((res) => {
+        if (!res.ok) throw new Error(`${TOOLS_FILE}: ${res.status} ${res.statusText}`);
+        return res.text();
+      }).then((text) => {
+        try {
+          return JSON.parse(text.replace(/^﻿/, ""));
+        } catch (e) {
+          throw new Error(`${TOOLS_FILE} isn't valid JSON (check for a missing or extra comma): ${e.message}`);
+        }
+      }).then(normalise).catch((err) => {
+        pending = null;
+        throw err;
+      });
+    }
+    return pending;
+  }
+  function useTools(enabled = true) {
+    const [state, setState] = (0, import_react4.useState)({ status: "loading", tools: [] });
+    const [attempt, setAttempt] = (0, import_react4.useState)(0);
+    (0, import_react4.useEffect)(() => {
+      if (!enabled) return;
+      let live = true;
+      loadTools().then(
+        (tools) => live && setState({ status: "done", tools }),
+        (err) => live && setState({ status: "error", tools: [], error: err.message || String(err) })
+      );
+      return () => {
+        live = false;
+      };
+    }, [enabled, attempt]);
+    return { ...state, retry: () => (setState({ status: "loading", tools: [] }), setAttempt((n) => n + 1)) };
+  }
+  function filterTools(tools, q) {
     const words = q.toLowerCase().split(/\s+/).filter(Boolean);
-    if (!words.length) return TOOLS;
-    return TOOLS.filter((t) => {
-      const hay = (t.title + " " + t.blurb).toLowerCase();
+    if (!words.length) return tools;
+    return tools.filter((t) => {
+      const hay = (t.title + " " + t.description).toLowerCase();
       return words.every((w) => hay.includes(w));
     });
   }
@@ -397,10 +375,10 @@
   var CACHE_MS = 6e4;
   var MODES2 = {
     learners: { label: "Search Learners", icon: "user", placeholder: "Name, learner ID or tutor group\u2026" },
-    courses: { label: "Search Courses", icon: "book", placeholder: "Course code, title, class code or staff\u2026" },
-    tools: { label: "Dashboards & Tools", icon: "grid", placeholder: "Filter dashboards and tools\u2026" }
+    courses: { label: "Search Courses", icon: "book-open", placeholder: "Course code, title, class code or staff\u2026" },
+    tools: { label: "Dashboards & Tools", icon: "layout-grid", placeholder: "Filter dashboards and tools\u2026" }
   };
-  var toolHref = (t) => t.href || detailHash("tool", t.id);
+  var toolHref = (t) => t.link || detailHash("tool", t.id);
   var cache = /* @__PURE__ */ new Map();
   function cached(key, fn) {
     const hit = cache.get(key);
@@ -422,28 +400,29 @@
   }
   var known = /* @__PURE__ */ new Map();
   function SearchPage({ route, hidden }) {
-    const [mode, setMode] = (0, import_react3.useState)(() => route.page === "search" ? route.mode : "learners");
-    const [q, setQ] = (0, import_react3.useState)(() => route.page === "search" ? route.q : "");
-    const [showInactive, setShowInactive] = (0, import_react3.useState)(() => route.page === "search" && route.inactive);
-    const [state, setState] = (0, import_react3.useState)({ status: "idle" });
-    const [retry, setRetry] = (0, import_react3.useState)(0);
-    const inputRef = (0, import_react3.useRef)(null);
+    const [mode, setMode] = (0, import_react5.useState)(() => route.page === "search" ? route.mode : "learners");
+    const [q, setQ] = (0, import_react5.useState)(() => route.page === "search" ? route.q : "");
+    const [showInactive, setShowInactive] = (0, import_react5.useState)(() => route.page === "search" && route.inactive);
+    const [state, setState] = (0, import_react5.useState)({ status: "idle" });
+    const [retry, setRetry] = (0, import_react5.useState)(0);
+    const inputRef = (0, import_react5.useRef)(null);
     const isTools = mode === "tools";
     const term = useDebounced(q.trim(), DEBOUNCE_MS);
     const ready = !isTools && term.length >= MIN_CHARS;
-    const tools = (0, import_react3.useMemo)(() => isTools ? filterTools(q) : [], [isTools, q]);
-    (0, import_react3.useEffect)(() => {
+    const toolList = useTools(isTools);
+    const tools = (0, import_react5.useMemo)(() => isTools ? filterTools(toolList.tools, q) : [], [isTools, toolList.tools, q]);
+    (0, import_react5.useEffect)(() => {
       if (parseHash().page !== "search") return;
       const h = searchHash({ mode, q: q.trim(), inactive: showInactive });
       if (h !== window.location.hash) window.history.replaceState(null, "", h);
     }, [mode, q, showInactive]);
-    (0, import_react3.useEffect)(() => {
+    (0, import_react5.useEffect)(() => {
       if (route.page !== "search") return;
       setMode(route.mode);
       setQ((cur) => cur.trim() === route.q ? cur : route.q);
       setShowInactive(route.inactive);
     }, [route]);
-    (0, import_react3.useEffect)(() => {
+    (0, import_react5.useEffect)(() => {
       if (!ready) {
         setState({ status: "idle" });
         return;
@@ -491,6 +470,7 @@
               "aria-pressed": mode === key,
               className: mode === key ? "on" : "",
               onClick: () => {
+                if (key !== mode) setQ("");
                 setMode(key);
                 inputRef.current && inputRef.current.focus();
               },
@@ -527,7 +507,7 @@
           /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "sp-hint", "aria-live": "polite", children: hint })
         ] })
       ] }),
-      isTools && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(ToolList, { tools, q: q.trim(), clear: () => {
+      isTools && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(ToolList, { status: toolList.status, error: toolList.error, retry: toolList.retry, total: toolList.tools.length, tools, q: q.trim(), clear: () => {
         setQ("");
         inputRef.current.focus();
       } }),
@@ -543,14 +523,27 @@
       ] }) : mode === "learners" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(LearnerResults, { learners: data.learners, term: state.term, showInactive, setShowInactive }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(CourseResults, { courses: data.courses, classes: data.classes, term: state.term, showInactive, setShowInactive }) })
     ] });
   }
-  function ToolList({ tools, q, clear }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("section", { className: "sp-results sp-tools-wrap", "aria-label": "Dashboards and tools", children: tools.length ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("ul", { className: "sp-tools", children: tools.map((t) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("a", { className: "sp-tool", href: toolHref(t), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sp-tool-icon", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Icon, { name: t.icon, size: 20 }) }),
+  function ToolList({ status, error, retry, total, tools, q, clear }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("section", { className: "sp-results sp-tools-wrap", "aria-label": "Dashboards and tools", children: status === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("p", { className: "sp-msg", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Spinner, {}),
+      " Loading\u2026"
+    ] }) : status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-error", role: "alert", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { children: [
+        "Couldn't load the dashboards and tools list. ",
+        error
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { type: "button", className: "sp-btn small", onClick: retry, children: "Try again" })
+    ] }) : total === 0 ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-empty", children: [
+      "No dashboards or tools have been added yet (",
+      TOOLS_FILE,
+      " is empty)."
+    ] }) : tools.length ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("ul", { className: "sp-tools", children: tools.map((t) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("a", { className: "sp-tool", href: toolHref(t), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sp-tool-icon", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Icon, { name: hasIcon(t.icon) ? t.icon : FALLBACK_ICON, size: 20 }) }),
       /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { className: "sp-tool-text", children: [
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("b", { children: t.title }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: t.blurb })
+        t.description && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: t.description })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sp-tool-go", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Icon, { name: "arrow", size: 16 }) })
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "sp-tool-go", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Icon, { name: "arrow-right", size: 16 }) })
     ] }) }, t.id)) }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-empty", children: [
       "No dashboards or tools match \u201C",
       q,
@@ -607,7 +600,7 @@
     { key: "endyear", label: "End year", value: (r) => r.endyear }
   ];
   function LearnerResults({ learners, term, showInactive, setShowInactive }) {
-    const { rows, inactiveCount } = (0, import_react3.useMemo)(() => split(learners, showInactive), [learners, showInactive]);
+    const { rows, inactiveCount } = (0, import_react5.useMemo)(() => split(learners, showInactive), [learners, showInactive]);
     const activeCount = learners.length - inactiveCount;
     const summary = showInactive ? `${plural(learners.length, "learner", "learners")} (${activeCount} active)` : `${plural(activeCount, "active learner", "active learners")}${inactiveCount ? ` \xB7 ${inactiveCount} inactive hidden` : ""}`;
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("section", { className: "sp-section", "aria-labelledby": "sp-h-learners", children: [
@@ -630,8 +623,8 @@
     { key: "acyear", label: "Year", value: (r) => r.acyear }
   ];
   function CourseResults({ courses, classes, term, showInactive, setShowInactive }) {
-    const c = (0, import_react3.useMemo)(() => split(courses, showInactive), [courses, showInactive]);
-    const k = (0, import_react3.useMemo)(() => split(classes, showInactive), [classes, showInactive]);
+    const c = (0, import_react5.useMemo)(() => split(courses, showInactive), [courses, showInactive]);
+    const k = (0, import_react5.useMemo)(() => split(classes, showInactive), [classes, showInactive]);
     const inactiveCount = c.inactiveCount + k.inactiveCount;
     const summary = `${plural(c.rows.length, "course", "courses")} \xB7 ${plural(k.rows.length, "class", "classes")}${!showInactive && inactiveCount ? ` \xB7 ${inactiveCount} inactive hidden` : ""}`;
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
@@ -659,19 +652,19 @@
   function initialTheme() {
     const saved = load(THEME_KEY, null);
     if (saved === "dark" || saved === "light") return saved;
-    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    return "dark";
   }
   function App({ rootEl }) {
     const route = useHashRoute();
-    const [theme, setTheme] = (0, import_react4.useState)(initialTheme);
-    const lastSearch = (0, import_react4.useRef)("#/");
-    const searchScroll = (0, import_react4.useRef)(0);
-    const prevPage = (0, import_react4.useRef)(route.page);
-    (0, import_react4.useLayoutEffect)(() => {
+    const [theme, setTheme] = (0, import_react6.useState)(initialTheme);
+    const lastSearch = (0, import_react6.useRef)("#/");
+    const searchScroll = (0, import_react6.useRef)(0);
+    const prevPage = (0, import_react6.useRef)(route.page);
+    (0, import_react6.useLayoutEffect)(() => {
       rootEl.setAttribute("data-theme", theme);
     }, [theme, rootEl]);
     if (route.page === "search") lastSearch.current = window.location.hash || "#/";
-    (0, import_react4.useLayoutEffect)(() => {
+    (0, import_react6.useLayoutEffect)(() => {
       if (prevPage.current === "search" && route.page !== "search") {
         window.scrollTo(0, 0);
       } else if (prevPage.current !== "search" && route.page === "search") {
@@ -679,7 +672,7 @@
       }
       prevPage.current = route.page;
     }, [route.page]);
-    (0, import_react4.useEffect)(() => {
+    (0, import_react6.useEffect)(() => {
       if (route.page !== "search") return;
       const on = () => searchScroll.current = window.scrollY;
       window.addEventListener("scroll", on, { passive: true });
@@ -693,7 +686,7 @@
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sp-app", children: [
       /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sp-top", children: [
         route.page !== "search" && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("a", { className: "sp-btn ghost", href: lastSearch.current, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Icon, { name: "back", size: 16 }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Icon, { name: "arrow-left", size: 16 }),
           " Back to search"
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
@@ -709,7 +702,8 @@
         )
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(SearchPage, { route, hidden: route.page !== "search" }),
-      route.page !== "search" && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Placeholder, { kind: route.page, id: route.id })
+      route.page === "icons" && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(IconGallery, {}),
+      route.page !== "search" && route.page !== "icons" && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Placeholder, { kind: route.page, id: route.id })
     ] });
   }
   var KINDS = {
@@ -720,16 +714,17 @@
   };
   function Placeholder({ kind, id }) {
     const item = kind === "tool" ? null : known.get(id);
-    const tool = kind === "tool" ? toolById(id) : null;
+    const toolList = useTools(kind === "tool");
+    const tool = kind === "tool" ? toolList.tools.find((t) => t.id === id) : null;
     const k = KINDS[kind];
-    const headRef = (0, import_react4.useRef)(null);
-    (0, import_react4.useEffect)(() => {
+    const headRef = (0, import_react6.useRef)(null);
+    (0, import_react6.useEffect)(() => {
       headRef.current && headRef.current.focus();
     }, [kind, id]);
     let name = id;
     const facts = [];
     if (kind === "tool") {
-      name = tool ? tool.title : "Unknown tool";
+      name = tool ? tool.title : toolList.status === "loading" ? "Loading\u2026" : "Unknown tool";
     } else if (item && kind === "learner") {
       name = `${item.firstname} ${item.lastname}`;
       facts.push(["Learner ID", item.pcode], ["Level", item.level], ["Tutor group", item.classcode], ["Tutor", item.tutorname]);
@@ -753,12 +748,68 @@
       ] }, label)) }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sp-section sp-placeholder", children: [
         /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { children: "Coming soon" }),
-        kind === "tool" ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { children: tool ? `${tool.blurb}. This page hasn't been built yet.` : `There is no tool called \u201C${id}\u201D.` }) : /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { children: [
+        kind === "tool" ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { children: toolList.status === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Spinner, {}) : tool ? /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+          tool.description && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+            tool.description.replace(/\.$/, ""),
+            ". "
+          ] }),
+          "This page hasn't been built yet."
+        ] }) : `There is no tool called \u201C${id}\u201D.` }) : /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { children: [
           "This page belongs to the ",
           k.area,
           ", which hasn't been upgraded yet."
         ] })
       ] })
+    ] });
+  }
+  function IconGallery() {
+    const toolList = useTools(true);
+    const [name, setName] = (0, import_react6.useState)("");
+    const n = name.trim();
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sp-page", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "sp-eyebrow", children: "Dashboards & Tools" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h1", { className: "sp-page-title", children: "Icons" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "sp-page-intro", children: [
+        "Icons come from ",
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("a", { href: "https://lucide.dev/icons", target: "_blank", rel: "noopener noreferrer", children: "Lucide" }),
+        ". Find one there and use its name as ",
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("code", { children: '"icon"' }),
+        " in ",
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("code", { children: "mainmenu-tools.json" }),
+        ", e.g. ",
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("code", { children: "layout-dashboard" }),
+        ". A name that isn't found shows ",
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("code", { children: FALLBACK_ICON }),
+        "."
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("label", { className: "sp-icon-try", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Try a name" }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+          "input",
+          {
+            type: "text",
+            value: name,
+            placeholder: "e.g. calendar-days",
+            spellCheck: "false",
+            onChange: (e) => setName(e.target.value),
+            onKeyDown: (e) => e.key === "Enter" && e.preventDefault()
+          }
+        ),
+        n && (hasIcon(n) ? /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("span", { className: "sp-icon-ok", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Icon, { name: n, size: 22 }),
+          " Found"
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "sp-icon-bad", children: "Not a Lucide icon" }))
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { className: "sp-icon-h", children: "In mainmenu-tools.json" }),
+      toolList.status === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Spinner, {}) : toolList.status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "sp-icon-bad", children: toolList.error }) : /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("ul", { className: "sp-icon-grid", children: toolList.tools.map((t) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("li", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "sp-tool-icon", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Icon, { name: hasIcon(t.icon) ? t.icon : FALLBACK_ICON, size: 20 }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("span", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("b", { children: t.title }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("br", {}),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("code", { children: t.icon || "(none)" }),
+          !hasIcon(t.icon) && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "sp-icon-bad", children: " not found" })
+        ] })
+      ] }, t.id)) })
     ] });
   }
 

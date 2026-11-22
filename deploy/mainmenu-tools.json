@@ -1,0 +1,10 @@
+[
+  { "title": "Staff Dashboard", "description": "Your classes, tasks and alerts at a glance", "icon": "layout-dashboard", "link": "" },
+  { "title": "Tutor Dashboard", "description": "Tutor group overview, attendance and concerns", "icon": "users", "link": "" },
+  { "title": "Enrolment System", "description": "Applications, enrolments and transfers", "icon": "clipboard-list", "link": "" },
+  { "title": "Attendance Tracker", "description": "Registers, absences and attendance trends", "icon": "user-check", "link": "" },
+  { "title": "Staff Timetables", "description": "Look up any staff member's timetable", "icon": "calendar-days", "link": "" },
+  { "title": "Access Arrangements Dashboard", "description": "Exam access arrangements and support needs", "icon": "shield-check", "link": "" },
+  { "title": "Parent Portal Accounts", "description": "Manage parent and carer portal access", "icon": "house", "link": "" },
+  { "title": "Manage Custom Cohorts", "description": "Build and maintain custom groups of learners", "icon": "layers", "link": "" }
+]
