@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SAPIEN (preview)</title>
+  <link rel="stylesheet" href="../deploy/mainmenu.css">
+  <style>html, body { margin: 0; }</style>
+</head>
+<body>
+  <!-- Mirrors the WebForms page: everything sits inside a <form>, so we can
+       catch anything that would trigger a postback. -->
+  <form id="form1" onsubmit="console.error('Form submitted: this would be a postback in WebForms'); alert('Postback triggered!'); return false;">
+    <div id="sapien-root"></div>
+  </form>
+
+  <!-- Preview only: demo data + fake PageMethods. SapienPreview makes results
+       open the #/ placeholder pages, as ViewStudent.aspx etc. don't exist here. -->
+  <script>window.SapienPreview = true;</script>
+  <script src="demo-data.js"></script>
+  <script src="mock-pagemethods.js"></script>
+
+  <!-- Same order as the real page -->
+  <script src="../library/js/DataMethods.js"></script>
+  <script src="../deploy/mainmenu-vendor.js"></script>
+  <script src="../deploy/mainmenu.js"></script>
+</body>
+</html>

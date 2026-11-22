@@ -1,0 +1,5 @@
+{
+  // When this folder is opened in VS Code on your own PC, prompt to install
+  // Dev Containers so it can offer "Reopen in Container".
+  "recommendations": ["ms-vscode-remote.remote-containers"]
+}

@@ -1,0 +1,40 @@
+{
+  // Name shown in the bottom-left corner of VS Code when connected
+  "name": "College Search",
+
+  // Base image: Microsoft's Ubuntu image made for dev containers (includes git)
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+
+  // "Features" are add-ons installed on top of the image
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "24" },
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+  },
+
+  // Extensions installed inside the container
+  "customizations": {
+    "vscode": {
+      "extensions": ["anthropic.claude-code"]
+    }
+  },
+
+  // Preview server (npm run preview) - forwarded automatically, locally and in Codespaces
+  "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": { "label": "SAPIEN preview", "onAutoForward": "notify" }
+  },
+
+  // Keep your Claude login between rebuilds (stored in a Docker volume, not on your PC)
+  "mounts": [
+    "source=claude-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
+  ],
+
+  // Work as the normal "vscode" user, not root
+  "remoteUser": "vscode",
+
+  // Runs once when the container is first created:
+  // 1. New Docker volumes are owned by root, so hand the Claude folder to the vscode user
+  //    (without this, Claude can't save your login: "failed to retrieve auth status")
+  // 2. Install npm packages so `npm run preview` / `npm run build` work straight away
+  "postCreateCommand": "sudo chown -R vscode:vscode /home/vscode/.claude && npm install"
+}
