@@ -40,6 +40,8 @@ src/
   hooks.js         useDebounced, hash routing helpers, safe localStorage
 library/js/DataMethods.js   Mirror of the main project's file (used only by the preview)
 preview/                    index.html, demo-data.js, mock-pagemethods.js
+.devcontainer/              Dev container (Codespaces + local Docker): Node 24, Claude Code, port 8000, npm install on create. Don't delete: without it the Codespace rebuilds with no Node.
+.vscode/extensions.json     Recommends Dev Containers so local VS Code offers "Reopen in Container"
 build.mjs                   esbuild config (3 outputs)
 ```
 
