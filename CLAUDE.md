@@ -4,7 +4,7 @@ Guidance for Claude Code when working in this repository.
 
 ## Project overview
 
-**SAPIEN**: a new React search page for an existing ASP.NET **WebForms** site (a college system). Users can search learners, or courses and classes, and results update as they type.
+**SAPIEN**: a new React search page for an existing ASP.NET **WebForms** site (a college system). Users can search learners, or courses and classes, and results update as they type. A third tab, **Dashboards & Tools**, lists links to other parts of the site.
 
 - Solo developer. **The user builds the database tables and the WebMethod endpoints in the separate WebForms project.** This repo only builds the frontend.
 - This repo produces the static files in `deploy/`, which get **copied into the WebForms project by hand**.
@@ -34,7 +34,8 @@ src/
   main.jsx         → deploy/sapien.js         App; imports of react/* resolve to window.SapienVendor (esbuild plugin in build.mjs)
   app.css          → deploy/sapien.css        All selectors scoped under #sapien-root
   App.jsx          Hash router, theme toggle, placeholder detail pages
-  SearchPage.jsx   Title, mode switch, search box, debounced search, result lists
+  SearchPage.jsx   Title, mode switch, search box, debounced search, result lists, tool cards
+  tools.js         Dashboards & Tools list (id, title, icon, blurb, href) + local filter
   ResultTable.jsx  Sortable results table (active rows first, max 200 rendered)
   api.js           Wrappers over window.callWebMethod plus row normalisation
   hooks.js         useDebounced, hash routing helpers, safe localStorage
@@ -63,7 +64,8 @@ Calls go through `window.callWebMethod(name, { search })` from `library/js/DataM
 
 Routes live in the hash so they never clash with WebForms/IIS:
 - `#/?mode=courses&q=fre&inactive=1` is the search page. Its state is kept in the URL with `replaceState`, so Back restores it.
-- `#/learner/<pcode>`, `#/course/<uicyear>` and `#/class/<uicyear>|<classcode>` are placeholder pages. The real pages will be built later in other parts of the site.
+- `#/?mode=tools&q=dash` is the Dashboards & Tools list. The box filters it locally (no server call, no 3-char minimum), and Enter opens the top match.
+- `#/learner/<pcode>`, `#/course/<uicyear>`, `#/class/<uicyear>|<classcode>` and `#/tool/<id>` are placeholder pages. When a tool's real page exists, set its `href` in `src/tools.js` and the card links there instead. The real pages will be built later in other parts of the site.
 
 ## WebForms integration (in the main project)
 
@@ -89,13 +91,14 @@ Routes live in the hash so they never clash with WebForms/IIS:
 
 - `dob` in the sample CSV is `00:00.0`, which looks mangled by Excel. What is the real format? It isn't displayed yet.
 - Do learners ever come back as multiple rows (for example, one per class)? The frontend currently keeps the first row per `pcode`.
-- What are the real URLs for learner, course and class pages once they exist? They will replace the placeholders.
+- What are the real URLs for learner, course and class pages, and for each dashboard/tool, once they exist? They will replace the placeholders.
 
 ## Roadmap / status
 
 - [x] Dev container, build pipeline, preview with demo data
 - [x] Search page: learners / courses+classes, live search, active toggle, dark mode
 - [x] Placeholder detail pages
+- [x] Dashboards & Tools tab with placeholder pages
 - [ ] Backend WebMethods wired up in the main project (user)
 - [ ] Real learner, course and class pages
 

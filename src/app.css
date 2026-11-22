@@ -53,7 +53,7 @@
   --err-border: #6e3434;
   --err-ink: #ffb4b4;
   --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 24px rgba(0, 0, 0, .25);
-  --brand-line: #5b9be6;
+  --brand-line: #ffffff;
   color-scheme: dark;
 }
 #sapien-root *,
@@ -193,7 +193,7 @@
 /* Intro sequence:
    0    – .3s   brackets draw in, closed together: []
    .3s  – 1.0s  brackets open as the word's column grows from 0 to full width
-   .85s – 1.6s  letters fade in left to right
+   .85s – 1.6s  letters fade in left to right (fade only, no slide)
    1.1s –       faint rules extend outward                                    */
 #sapien-root .sp-title .word-wrap {
   display: grid;
@@ -212,7 +212,6 @@
 #sapien-root .sp-title .word span {
   display: inline-block;
   opacity: 0;
-  transform: translateX(-.25em);
   animation: sp-letter .4s ease-out forwards;
   animation-delay: calc(.85s + var(--i) * 110ms);
 }
@@ -261,7 +260,6 @@
 @keyframes sp-letter {
   to {
     opacity: 1;
-    transform: none;
   }
 }
 @keyframes sp-bracket {
@@ -616,6 +614,69 @@
   }
 }
 
+/* ---- Dashboards & Tools --------------------------------------------------- */
+#sapien-root .sp-tools-wrap {
+  max-width: 960px;
+}
+#sapien-root .sp-tools {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+#sapien-root .sp-tool {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color .12s, box-shadow .12s;
+}
+#sapien-root .sp-tool:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow);
+}
+#sapien-root .sp-tool-icon {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+#sapien-root .sp-tool-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+#sapien-root .sp-tool-text b {
+  font-weight: 600;
+}
+#sapien-root .sp-tool-text span {
+  color: var(--ink-2);
+  font-size: 13px;
+}
+#sapien-root .sp-tool-go {
+  flex: none;
+  color: var(--ink-3);
+  transition: transform .12s, color .12s;
+}
+#sapien-root .sp-tool:hover .sp-tool-go {
+  color: var(--accent-ink);
+  transform: translateX(2px);
+}
+
 /* ---- Placeholder pages ---------------------------------------------------- */
 #sapien-root .sp-page {
   max-width: 900px;
@@ -670,6 +731,12 @@
   }
   #sapien-root .sp-title .br::after {
     display: none;
+  }
+  /* three options don't fit on one line on a phone: let them wrap */
+  #sapien-root .sp-seg {
+    flex-wrap: wrap;
+    justify-content: center;
+    border-radius: 20px;
   }
   #sapien-root .sp-seg button {
     padding: 6px 10px;
