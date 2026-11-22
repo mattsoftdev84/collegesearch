@@ -102,10 +102,13 @@ export default function SearchPage({ route, hidden }) {
         <h1 className="sp-title">
           <span className="sp-sr">SAPIEN</span>
           <span className="br l" aria-hidden="true" />
-          <span className="word" aria-hidden="true">
-            {'SAPIEN'.split('').map((ch, i) => (
-              <span key={i} style={{ '--i': i }}>{ch}</span>
-            ))}
+          {/* word-wrap grows from 0 width so the brackets "open" around the word */}
+          <span className="word-wrap" aria-hidden="true">
+            <span className="word">
+              {'SAPIEN'.split('').map((ch, i) => (
+                <span key={i} style={{ '--i': i }}>{ch}</span>
+              ))}
+            </span>
           </span>
           <span className="br r" aria-hidden="true" />
         </h1>

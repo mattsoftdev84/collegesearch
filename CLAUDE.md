@@ -22,7 +22,7 @@ Guidance for Claude Code when working in this repository.
 Always run `npm run build` (minified, production React) before handing `deploy/` over or committing. Watch/preview builds are unminified with inline sourcemaps, so they must not be committed.
 
 Preview notes:
-- In Codespaces, port 8000 is auto-forwarded. Open the forwarded URL and add `/preview/`.
+- In Codespaces, port 8000 is auto-forwarded. The bare URL redirects to `/preview/` via the root `index.html`, which is dev-only and not deployed.
 - Mock latency is random (150–650 ms). Typing `error` in the search box shows the failure state.
 - Demo learners with inactive rows: try `smi`. Courses: try `french`.
 
