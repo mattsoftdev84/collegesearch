@@ -16,17 +16,49 @@ function str(v) {
   return v == null ? '' : String(v).trim();
 }
 
-async function call(method, search) {
+// Must match the Data text of AccessHelper.Expired() on the server. DataMethods.js
+// rejects with response.Data only, so the Status ("expired") never reaches us.
+export const EXPIRED_TEXT = 'Your session has expired';
+
+// Turns whatever DataMethods.js / PageMethods rejected with into an Error.
+// err.expired is true when the session or login has gone: the server's Expired()
+// response, an HTTP 401/403, or the page's PrincipalPermission check failing.
+function toError(err) {
+  let msg;
+  let status = 0;
+  let type = '';
+  if (err && typeof err.get_message === 'function') {
+    // Sys.Net.WebServiceError (the call itself failed)
+    msg = err.get_message();
+    if (typeof err.get_statusCode === 'function') status = err.get_statusCode();
+    if (typeof err.get_exceptionType === 'function') type = err.get_exceptionType() || '';
+  } else {
+    msg = err && err.message ? err.message : String(err);
+  }
+  const e = new Error(msg);
+  e.expired = msg.indexOf(EXPIRED_TEXT) !== -1 || status === 401 || status === 403 || /SecurityException/.test(type);
+  return e;
+}
+
+async function callRaw(method, params) {
   if (typeof window.callWebMethod !== 'function') {
     throw new Error('callWebMethod is not loaded (library/js/DataMethods.js).');
   }
   try {
-    return asRows(await window.callWebMethod(method, { search }));
+    return await window.callWebMethod(method, params);
   } catch (err) {
-    // PageMethods errors are objects with get_message(); rejections may be strings.
-    const msg = err && typeof err.get_message === 'function' ? err.get_message() : err && err.message ? err.message : String(err);
-    throw new Error(msg);
+    throw toError(err);
   }
+}
+
+async function call(method, search) {
+  return asRows(await callRaw(method, { search }));
+}
+
+// Keeps the server session alive. Resolves on success; rejects with err.expired
+// when the session can't be restored.
+export async function keepAlive() {
+  await callRaw('KeepAlive', {});
 }
 
 export async function searchLearners(search) {

@@ -61,7 +61,7 @@
   var import_client = __toESM(require_client());
 
   // src/App.jsx
-  var import_react6 = __toESM(require_react());
+  var import_react7 = __toESM(require_react());
 
   // src/hooks.js
   var import_react = __toESM(require_react());
@@ -127,7 +127,7 @@
   }
 
   // src/SearchPage.jsx
-  var import_react5 = __toESM(require_react());
+  var import_react6 = __toESM(require_react());
 
   // src/api.js
   function asRows(data) {
@@ -141,16 +141,37 @@
   function str(v) {
     return v == null ? "" : String(v).trim();
   }
-  async function call(method, search) {
+  var EXPIRED_TEXT = "Your session has expired";
+  function toError(err) {
+    let msg;
+    let status = 0;
+    let type = "";
+    if (err && typeof err.get_message === "function") {
+      msg = err.get_message();
+      if (typeof err.get_statusCode === "function") status = err.get_statusCode();
+      if (typeof err.get_exceptionType === "function") type = err.get_exceptionType() || "";
+    } else {
+      msg = err && err.message ? err.message : String(err);
+    }
+    const e = new Error(msg);
+    e.expired = msg.indexOf(EXPIRED_TEXT) !== -1 || status === 401 || status === 403 || /SecurityException/.test(type);
+    return e;
+  }
+  async function callRaw(method, params) {
     if (typeof window.callWebMethod !== "function") {
       throw new Error("callWebMethod is not loaded (library/js/DataMethods.js).");
     }
     try {
-      return asRows(await window.callWebMethod(method, { search }));
+      return await window.callWebMethod(method, params);
     } catch (err) {
-      const msg = err && typeof err.get_message === "function" ? err.get_message() : err && err.message ? err.message : String(err);
-      throw new Error(msg);
+      throw toError(err);
     }
+  }
+  async function call(method, search) {
+    return asRows(await callRaw(method, { search }));
+  }
+  async function keepAlive() {
+    await callRaw("KeepAlive", {});
   }
   async function searchLearners(search) {
     const rows = await call("GetLearners", search);
@@ -284,6 +305,73 @@
     ] });
   }
 
+  // src/session.js
+  var import_react4 = __toESM(require_react());
+  function intervals() {
+    const fast = window.SapienPreview && /[?&]keepalive=(\d+)s\b/.exec(window.location.search);
+    if (fast) {
+      const ping = Math.max(1, Number(fast[1])) * 1e3;
+      return { ping, active: ping * 2.5 };
+    }
+    return { ping: 4 * 6e4, active: 10 * 6e4 };
+  }
+  var expired = false;
+  var subs = /* @__PURE__ */ new Set();
+  function markExpired() {
+    if (expired) return;
+    expired = true;
+    subs.forEach((fn) => fn());
+  }
+  function subscribe(fn) {
+    subs.add(fn);
+    return () => subs.delete(fn);
+  }
+  function useSessionExpired() {
+    return (0, import_react4.useSyncExternalStore)(subscribe, () => expired);
+  }
+  function reloadPage() {
+    window.location.reload();
+  }
+  var ACTIVITY = ["keydown", "pointerdown", "pointermove", "wheel", "scroll", "touchstart"];
+  function useKeepAlive() {
+    (0, import_react4.useEffect)(() => {
+      const { ping, active } = intervals();
+      let lastActivity = Date.now();
+      let lastPing = Date.now();
+      let busy = false;
+      const visible = () => document.visibilityState !== "hidden";
+      const check = () => {
+        const now = Date.now();
+        if (expired || busy || !visible()) return;
+        if (now - lastActivity > active) return;
+        if (now - lastPing < ping) return;
+        busy = true;
+        lastPing = now;
+        keepAlive().then(
+          () => busy = false,
+          (err) => {
+            busy = false;
+            if (err && err.expired) markExpired();
+          }
+        );
+      };
+      const onActivity = () => lastActivity = Date.now();
+      const onVisible = () => {
+        if (!visible()) return;
+        onActivity();
+        check();
+      };
+      ACTIVITY.forEach((ev) => window.addEventListener(ev, onActivity, { passive: true, capture: true }));
+      document.addEventListener("visibilitychange", onVisible);
+      const timer = setInterval(check, Math.min(15e3, ping / 4));
+      return () => {
+        ACTIVITY.forEach((ev) => window.removeEventListener(ev, onActivity, { capture: true }));
+        document.removeEventListener("visibilitychange", onVisible);
+        clearInterval(timer);
+      };
+    }, []);
+  }
+
   // src/links.js
   var PAGES = {
     learner: "ViewStudent.aspx?student={0}",
@@ -303,7 +391,7 @@
   var classLink = (r) => link("class", r.uicyear);
 
   // src/tools.js
-  var import_react4 = __toESM(require_react());
+  var import_react5 = __toESM(require_react());
   var scriptSrc = typeof document !== "undefined" && document.currentScript ? document.currentScript.src : "";
   var TOOLS_FILE = "mainmenu-tools.json";
   var toolsUrl = () => new URL(TOOLS_FILE, scriptSrc || window.location.href).href;
@@ -344,9 +432,9 @@
     return pending;
   }
   function useTools(enabled = true) {
-    const [state, setState] = (0, import_react4.useState)({ status: "loading", tools: [] });
-    const [attempt, setAttempt] = (0, import_react4.useState)(0);
-    (0, import_react4.useEffect)(() => {
+    const [state, setState] = (0, import_react5.useState)({ status: "loading", tools: [] });
+    const [attempt, setAttempt] = (0, import_react5.useState)(0);
+    (0, import_react5.useEffect)(() => {
       if (!enabled) return;
       let live = true;
       loadTools().then(
@@ -400,29 +488,29 @@
   }
   var known = /* @__PURE__ */ new Map();
   function SearchPage({ route, hidden }) {
-    const [mode, setMode] = (0, import_react5.useState)(() => route.page === "search" ? route.mode : "learners");
-    const [q, setQ] = (0, import_react5.useState)(() => route.page === "search" ? route.q : "");
-    const [showInactive, setShowInactive] = (0, import_react5.useState)(() => route.page === "search" && route.inactive);
-    const [state, setState] = (0, import_react5.useState)({ status: "idle" });
-    const [retry, setRetry] = (0, import_react5.useState)(0);
-    const inputRef = (0, import_react5.useRef)(null);
+    const [mode, setMode] = (0, import_react6.useState)(() => route.page === "search" ? route.mode : "learners");
+    const [q, setQ] = (0, import_react6.useState)(() => route.page === "search" ? route.q : "");
+    const [showInactive, setShowInactive] = (0, import_react6.useState)(() => route.page === "search" && route.inactive);
+    const [state, setState] = (0, import_react6.useState)({ status: "idle" });
+    const [retry, setRetry] = (0, import_react6.useState)(0);
+    const inputRef = (0, import_react6.useRef)(null);
     const isTools = mode === "tools";
     const term = useDebounced(q.trim(), DEBOUNCE_MS);
     const ready = !isTools && term.length >= MIN_CHARS;
     const toolList = useTools(isTools);
-    const tools = (0, import_react5.useMemo)(() => isTools ? filterTools(toolList.tools, q) : [], [isTools, toolList.tools, q]);
-    (0, import_react5.useEffect)(() => {
+    const tools = (0, import_react6.useMemo)(() => isTools ? filterTools(toolList.tools, q) : [], [isTools, toolList.tools, q]);
+    (0, import_react6.useEffect)(() => {
       if (parseHash().page !== "search") return;
       const h = searchHash({ mode, q: q.trim(), inactive: showInactive });
       if (h !== window.location.hash) window.history.replaceState(null, "", h);
     }, [mode, q, showInactive]);
-    (0, import_react5.useEffect)(() => {
+    (0, import_react6.useEffect)(() => {
       if (route.page !== "search") return;
       setMode(route.mode);
       setQ((cur) => cur.trim() === route.q ? cur : route.q);
       setShowInactive(route.inactive);
     }, [route]);
-    (0, import_react5.useEffect)(() => {
+    (0, import_react6.useEffect)(() => {
       if (!ready) {
         setState({ status: "idle" });
         return;
@@ -436,7 +524,8 @@
           setState({ status: "done", mode, term, data: data2 });
         },
         (err) => {
-          if (!stale) setState({ status: "error", mode, term, error: err.message || String(err) });
+          if (err && err.expired) markExpired();
+          if (!stale) setState({ status: "error", mode, term, error: err.message || String(err), expired: !!(err && err.expired) });
         }
       );
       return () => {
@@ -511,7 +600,10 @@
         setQ("");
         inputRef.current.focus();
       } }),
-      ready && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "sp-results", "aria-busy": loading, children: state.status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-error", role: "alert", children: [
+      ready && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "sp-results", "aria-busy": loading, children: state.status === "error" && state.expired ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-error", role: "alert", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "Can't search: your session has expired." }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { type: "button", className: "sp-btn small", onClick: reloadPage, children: "Reload" })
+      ] }) : state.status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "sp-error", role: "alert", children: [
         /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { children: [
           "Search failed: ",
           state.error
@@ -600,7 +692,7 @@
     { key: "endyear", label: "End year", value: (r) => r.endyear }
   ];
   function LearnerResults({ learners, term, showInactive, setShowInactive }) {
-    const { rows, inactiveCount } = (0, import_react5.useMemo)(() => split(learners, showInactive), [learners, showInactive]);
+    const { rows, inactiveCount } = (0, import_react6.useMemo)(() => split(learners, showInactive), [learners, showInactive]);
     const activeCount = learners.length - inactiveCount;
     const summary = showInactive ? `${plural(learners.length, "learner", "learners")} (${activeCount} active)` : `${plural(activeCount, "active learner", "active learners")}${inactiveCount ? ` \xB7 ${inactiveCount} inactive hidden` : ""}`;
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("section", { className: "sp-section", "aria-labelledby": "sp-h-learners", children: [
@@ -623,8 +715,8 @@
     { key: "acyear", label: "Year", value: (r) => r.acyear }
   ];
   function CourseResults({ courses, classes, term, showInactive, setShowInactive }) {
-    const c = (0, import_react5.useMemo)(() => split(courses, showInactive), [courses, showInactive]);
-    const k = (0, import_react5.useMemo)(() => split(classes, showInactive), [classes, showInactive]);
+    const c = (0, import_react6.useMemo)(() => split(courses, showInactive), [courses, showInactive]);
+    const k = (0, import_react6.useMemo)(() => split(classes, showInactive), [classes, showInactive]);
     const inactiveCount = c.inactiveCount + k.inactiveCount;
     const summary = `${plural(c.rows.length, "course", "courses")} \xB7 ${plural(k.rows.length, "class", "classes")}${!showInactive && inactiveCount ? ` \xB7 ${inactiveCount} inactive hidden` : ""}`;
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
@@ -656,15 +748,17 @@
   }
   function App({ rootEl }) {
     const route = useHashRoute();
-    const [theme, setTheme] = (0, import_react6.useState)(initialTheme);
-    const lastSearch = (0, import_react6.useRef)("#/");
-    const searchScroll = (0, import_react6.useRef)(0);
-    const prevPage = (0, import_react6.useRef)(route.page);
-    (0, import_react6.useLayoutEffect)(() => {
+    const [theme, setTheme] = (0, import_react7.useState)(initialTheme);
+    const lastSearch = (0, import_react7.useRef)("#/");
+    const searchScroll = (0, import_react7.useRef)(0);
+    const prevPage = (0, import_react7.useRef)(route.page);
+    const expired2 = useSessionExpired();
+    useKeepAlive();
+    (0, import_react7.useLayoutEffect)(() => {
       rootEl.setAttribute("data-theme", theme);
     }, [theme, rootEl]);
     if (route.page === "search") lastSearch.current = window.location.hash || "#/";
-    (0, import_react6.useLayoutEffect)(() => {
+    (0, import_react7.useLayoutEffect)(() => {
       if (prevPage.current === "search" && route.page !== "search") {
         window.scrollTo(0, 0);
       } else if (prevPage.current !== "search" && route.page === "search") {
@@ -672,7 +766,7 @@
       }
       prevPage.current = route.page;
     }, [route.page]);
-    (0, import_react6.useEffect)(() => {
+    (0, import_react7.useEffect)(() => {
       if (route.page !== "search") return;
       const on = () => searchScroll.current = window.scrollY;
       window.addEventListener("scroll", on, { passive: true });
@@ -701,6 +795,16 @@
           }
         )
       ] }),
+      expired2 && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sp-error sp-expired", role: "alert", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("span", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Icon, { name: "clock-exclamation-point", size: 16 }),
+          " Your session has expired. Reload the page to carry on; your search will be kept."
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("button", { type: "button", className: "sp-btn small", onClick: reloadPage, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Icon, { name: "rotate-cw", size: 16 }),
+          " Reload"
+        ] })
+      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(SearchPage, { route, hidden: route.page !== "search" }),
       route.page === "icons" && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(IconGallery, {}),
       route.page !== "search" && route.page !== "icons" && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Placeholder, { kind: route.page, id: route.id })
@@ -717,8 +821,8 @@
     const toolList = useTools(kind === "tool");
     const tool = kind === "tool" ? toolList.tools.find((t) => t.id === id) : null;
     const k = KINDS[kind];
-    const headRef = (0, import_react6.useRef)(null);
-    (0, import_react6.useEffect)(() => {
+    const headRef = (0, import_react7.useRef)(null);
+    (0, import_react7.useEffect)(() => {
       headRef.current && headRef.current.focus();
     }, [kind, id]);
     let name = id;
@@ -764,7 +868,7 @@
   }
   function IconGallery() {
     const toolList = useTools(true);
-    const [name, setName] = (0, import_react6.useState)("");
+    const [name, setName] = (0, import_react7.useState)("");
     const n = name.trim();
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "sp-page", children: [
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "sp-eyebrow", children: "Dashboards & Tools" }),

@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { load, save, useHashRoute } from './hooks.js';
 import SearchPage, { known } from './SearchPage.jsx';
+import { reloadPage, useKeepAlive, useSessionExpired } from './session.js';
 import { useTools } from './tools.js';
 import { FALLBACK_ICON, hasIcon, Icon, Spinner, StatusPill } from './ui.jsx';
 
@@ -18,6 +19,8 @@ export default function App({ rootEl }) {
   const lastSearch = useRef('#/');
   const searchScroll = useRef(0);
   const prevPage = useRef(route.page);
+  const expired = useSessionExpired();
+  useKeepAlive();
 
   useLayoutEffect(() => {
     rootEl.setAttribute('data-theme', theme);
@@ -66,6 +69,17 @@ export default function App({ rootEl }) {
           <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
         </button>
       </div>
+
+      {expired && (
+        <div className="sp-error sp-expired" role="alert">
+          <span>
+            <Icon name="clock-exclamation-point" size={16} /> Your session has expired. Reload the page to carry on; your search will be kept.
+          </span>
+          <button type="button" className="sp-btn small" onClick={reloadPage}>
+            <Icon name="rotate-cw" size={16} /> Reload
+          </button>
+        </div>
+      )}
 
       <SearchPage route={route} hidden={route.page !== 'search'} />
       {route.page === 'icons' && <IconGallery />}

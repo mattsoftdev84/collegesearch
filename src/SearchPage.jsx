@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { searchClasses, searchCourses, searchLearners } from './api.js';
 import { detailHash, parseHash, searchHash, useDebounced } from './hooks.js';
 import ResultTable from './ResultTable.jsx';
+import { markExpired, reloadPage } from './session.js';
 import { classLink, courseLink, learnerLink } from './links.js';
 import { filterTools, TOOLS_FILE, useTools } from './tools.js';
 import { FALLBACK_ICON, hasIcon, Icon, Spinner, Switch } from './ui.jsx';
@@ -87,7 +88,8 @@ export default function SearchPage({ route, hidden }) {
         setState({ status: 'done', mode, term, data });
       },
       (err) => {
-        if (!stale) setState({ status: 'error', mode, term, error: err.message || String(err) });
+        if (err && err.expired) markExpired();
+        if (!stale) setState({ status: 'error', mode, term, error: err.message || String(err), expired: !!(err && err.expired) });
       }
     );
     return () => {
@@ -185,7 +187,12 @@ export default function SearchPage({ route, hidden }) {
 
       {ready && (
         <div className="sp-results" aria-busy={loading}>
-          {state.status === 'error' ? (
+          {state.status === 'error' && state.expired ? (
+            <div className="sp-error" role="alert">
+              <span>Can't search: your session has expired.</span>
+              <button type="button" className="sp-btn small" onClick={reloadPage}>Reload</button>
+            </div>
+          ) : state.status === 'error' ? (
             <div className="sp-error" role="alert">
               <span>Search failed: {state.error}</span>
               <button type="button" className="sp-btn small" onClick={() => setRetry((n) => n + 1)}>Try again</button>

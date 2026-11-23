@@ -1,6 +1,6 @@
 {
   "name": "sapien-search",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "SAPIEN search page (React) for the WebForms site",
   "scripts": {

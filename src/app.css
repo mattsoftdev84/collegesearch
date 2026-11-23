@@ -594,6 +594,17 @@
   background: var(--err-bg);
   color: var(--err-ink);
 }
+/* Session expired banner, shown above everything until the page is reloaded */
+#sapien-root .sp-expired {
+  max-width: 1100px;
+  margin: 12px auto 0;
+}
+#sapien-root .sp-expired > span,
+#sapien-root .sp-expired .sp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
 #sapien-root .sp-spinner {
   display: inline-block;
   width: 18px;

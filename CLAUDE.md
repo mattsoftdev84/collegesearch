@@ -25,7 +25,8 @@ Always run `npm run build` (production React) before handing `deploy/` over or c
 
 Preview notes:
 - In Codespaces, port 8000 is auto-forwarded. The bare URL redirects to `/preview/` via the root `index.html`, which is dev-only and not deployed.
-- Mock latency is random (150–650 ms). Typing `error` in the search box shows the failure state.
+- Mock latency is random (150–650 ms). Typing `error` in the search box shows the failure state. Typing `expired` shows the session-expired banner (the mock session then stays expired, `KeepAlive` included, until reload).
+- Add `?keepalive=10s` before the `#` (e.g. `/preview/?keepalive=10s#/`) to ping `KeepAlive` every 10 s instead of 4 min. Pings are logged to the console.
 - Demo learners with inactive rows: try `smi`. Courses: try `french`.
 
 ## Architecture
@@ -42,7 +43,8 @@ src/
   mainmenu-tools.json → deploy/mainmenu-tools.json  Dashboards & Tools list (copied as-is)
   ui.jsx           Icon (Lucide lookup by name), StatusPill, Switch, Spinner
   ResultTable.jsx  Sortable results table (active rows first, max 200 rendered)
-  api.js           Wrappers over window.callWebMethod plus row normalisation
+  api.js           Wrappers over window.callWebMethod plus row normalisation; flags expired-session errors (err.expired)
+  session.js       Activity-aware KeepAlive ping, shared "session expired" flag, reload
   hooks.js         useDebounced, hash routing helpers, safe localStorage
 docs/MainMenuB.aspx.txt     Full markup for the main project's page
 library/js/DataMethods.js   Mirror of the main project's file (used only by the preview)
@@ -61,10 +63,15 @@ Calls go through `window.callWebMethod(name, { search })` from `library/js/DataM
 | `GetLearners(string search)` | pcode, active, firstname, lastname, dob, level, classcode, tutorcode, tutorname, endyear | `active`       |
 | `GetCourses(string search)`  | acyear, uic, title, qualification, iscurrent, uicyear, searchstring                     | `iscurrent`    |
 | `GetClasses(string search)`  | courses fields + classcode, staffcode, staffname                                        | `iscurrent`    |
+| `KeepAlive()`                | none (`Data: "ok"`)                                                                     | n/a            |
 
 - `uicyear` is misnamed. For a **course** it is `uic-acyear`, and for a **class** it is `classcode-acyear`. It's the key `ViewCourse.aspx?group=` takes for both, and the row id in the UI.
 - Active flags may arrive as `1`/`"1"`/`true`/`"True"`, and `api.js` normalises them all. Learners are deduplicated by `pcode`.
 - Search behaviour: no request until **3+ characters**, 300 ms debounce, stale responses ignored, and a 60 s in-memory cache. Course mode calls `GetCourses` and `GetClasses` in parallel.
+- **Session expiry.** The server session times out after 10 minutes. Page permissions live in Session, so the server rebuilds them on the next call when the session has lapsed (`AccessHelper.Ensure` + the page's `SetPermissions`, in the main project). If it can't (not logged in), it returns `AccessHelper.Expired()`: `{ Status: "expired", Data: "Your session has expired" }`.
+  - `DataMethods.js` (shared, not ours to change) rejects with `response.Data` only, so `api.js` detects expiry by that exact text (`EXPIRED_TEXT`), or by HTTP 401/403, or a `SecurityException` (the page's `PrincipalPermission` failing). **Keep the server text and `EXPIRED_TEXT` in step.**
+  - `session.js` pings `KeepAlive` every 4 min, only while the tab is visible and the user was active (key/pointer/scroll/touch) in the last 10 min, so an unattended PC still times out. Returning to the tab counts as activity and pings if one is due.
+  - On expiry, a banner offers **Reload**. The URL hash keeps the search, so it comes back after reload.
 - Agreed server-side behaviour: filter on the server, match case-insensitively with every typed word required, cap results (TOP ~200), and return active rows first. Do **not** ship all ~6,000 learners to the browser.
 
 ### Routing
@@ -98,14 +105,14 @@ Routes live in the hash so they never clash with WebForms/IIS:
 The page is `MainMenuB.aspx`. Copy the files from `deploy/` into `library/js/mainmenu/` in the main project. Copy `mainmenu-tools.json` only the first time, because after that it's edited on the server. The full page markup is in `docs/MainMenuB.aspx.txt`. In short:
 
 ```html
-<link rel="stylesheet" href="library/js/mainmenu/mainmenu.css?v=0.2.0" />
+<link rel="stylesheet" href="library/js/mainmenu/mainmenu.css?v=0.3.0" />
 <form runat="server">
   <asp:ScriptManager runat="server" EnablePageMethods="true" />
   <div id="sapien-root" data-theme="dark"></div>
 </form>
 <script src="library/js/DataMethods.js"></script>
-<script src="library/js/mainmenu/mainmenu-vendor.js?v=0.2.0"></script>   <!-- must load before mainmenu.js -->
-<script src="library/js/mainmenu/mainmenu.js?v=0.2.0"></script>
+<script src="library/js/mainmenu/mainmenu-vendor.js?v=0.3.0"></script>   <!-- must load before mainmenu.js -->
+<script src="library/js/mainmenu/mainmenu.js?v=0.3.0"></script>
 ```
 
 - The WebMethods (`GetLearners`, `GetCourses`, `GetClasses`) must be `public static` `[WebMethod]`s in `MainMenuB.aspx.cs`, because `PageMethods` calls the page it's on.
@@ -138,6 +145,8 @@ The page is `MainMenuB.aspx`. Copy the files from `deploy/` into `library/js/mai
 - [x] Results link to ViewStudent.aspx / ViewCourse.aspx when deployed
 - [x] Dashboards & Tools list loaded from mainmenu-tools.json
 - [ ] Real links filled in on the server's mainmenu-tools.json (user)
+- [x] Session keep-alive and expired banner (frontend)
+- [ ] `KeepAlive` WebMethod and `AccessHelper.Ensure`/`Expired` in the main project (user)
 
 ## Decisions log
 
@@ -153,3 +162,4 @@ The page is `MainMenuB.aspx`. Copy the files from `deploy/` into `library/js/mai
 - 2026-11-22: Switching search mode clears the search box.
 - 2026-11-22: Switched icons to Lucide (`lucide@1.70.0`, ISC), with all icons in the vendor bundle so any name works in `mainmenu-tools.json`. This makes the vendor file about 525 KB bigger, but it's cached.
 - 2026-11-22: Dark mode is the default. A saved choice of light still wins.
+- 2026-11-23: Session expiry handled with an activity-aware `KeepAlive` ping (4 min, only if active in the last 10 min and the tab is visible) plus a "session expired, Reload" banner. Not an always-on ping, so unattended PCs still time out. The server rebuilds lost session permissions where it can.
